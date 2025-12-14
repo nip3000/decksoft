@@ -255,7 +255,7 @@ const testimonialsRow2: Testimonial[] = [
 ];
 
 const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => (
-  <div className="flex-shrink-0 w-[380px] bg-card border border-border rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:border-primary/30 group">
+  <div className="flex-shrink-0 w-[300px] sm:w-[340px] md:w-[380px] bg-card border border-border rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:border-primary/30 group">
     {/* System Image */}
     <div className="h-24 relative overflow-hidden">
       <img 
@@ -306,16 +306,16 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => (
 
 const TestimonialsSection = () => {
   return (
-    <section id="testimonials" className="py-16 relative overflow-hidden">
+    <section id="testimonials" className="py-12 md:py-16 relative overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-muted/50 to-transparent" />
       
       <div className="relative z-10">
-        <AnimatedSection className="text-center mb-12 px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+        <AnimatedSection className="text-center mb-8 md:mb-12 px-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4">
             O que nossos clientes dizem
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-muted-foreground max-w-2xl mx-auto text-sm md:text-base">
             Empresas de todo o Brasil confiam no DeckSoft para gerenciar seus negócios
           </p>
         </AnimatedSection>

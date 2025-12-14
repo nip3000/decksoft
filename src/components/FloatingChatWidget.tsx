@@ -108,11 +108,11 @@ const FloatingChatWidget = ({
     }, 200);
   };
   if (!isVisible && !isDismissed) return null;
-  return <div className="fixed bottom-0 right-4 z-50">
+  return <div className="fixed bottom-0 right-2 sm:right-4 z-50">
       {/* Chat bubble popup */}
       {isVisible && (
         <div 
-          className={`bg-card border border-border rounded-t-2xl shadow-2xl shadow-primary/20 w-80 transition-all duration-500 ease-out cursor-pointer ${isAnimating ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"}`}
+          className={`bg-card border border-border rounded-t-2xl shadow-2xl shadow-primary/20 w-[calc(100vw-1rem)] sm:w-80 max-w-80 transition-all duration-500 ease-out cursor-pointer ${isAnimating ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"}`}
           onClick={isCollapsed ? handleToggleCollapse : undefined}
         >
           {/* Header */}

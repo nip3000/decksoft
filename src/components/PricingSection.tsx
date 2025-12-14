@@ -70,35 +70,35 @@ const PricingSection = ({ onOpenChat }: PricingSectionProps) => {
       <div className="absolute inset-0 bg-gradient-to-t from-muted/30 via-transparent to-muted/30" />
       
       <div className="container mx-auto px-4 relative z-10">
-        <AnimatedSection className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+        <AnimatedSection className="text-center mb-8 md:mb-12 px-2">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4">
             Planos que cabem no seu negócio
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
+          <p className="text-muted-foreground max-w-2xl mx-auto mb-6 md:mb-8 text-sm md:text-base">
             Escolha o plano ideal para sua empresa. Todos incluem suporte e atualizações.
           </p>
 
           {/* Toggle Mensal/Anual */}
-          <div className="flex items-center justify-center gap-4">
-            <span className={`text-sm font-medium transition-colors ${!isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
+          <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4">
+            <span className={`text-xs md:text-sm font-medium transition-colors ${!isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
               Mensal
             </span>
             <Switch
               checked={isAnnual}
               onCheckedChange={setIsAnnual}
             />
-            <span className={`text-sm font-medium transition-colors ${isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
+            <span className={`text-xs md:text-sm font-medium transition-colors ${isAnnual ? 'text-foreground' : 'text-muted-foreground'}`}>
               Anual
             </span>
             {isAnnual && (
-              <Badge variant="secondary" className="bg-primary/10 text-primary border-0">
+              <Badge variant="secondary" className="bg-primary/10 text-primary border-0 text-xs">
                 Economize até 20%
               </Badge>
             )}
           </div>
         </AnimatedSection>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto items-stretch">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 max-w-5xl mx-auto items-stretch px-2">
           {plans.map((plan, index) => (
             <AnimatedSection 
               key={plan.name} 
@@ -107,9 +107,9 @@ const PricingSection = ({ onOpenChat }: PricingSectionProps) => {
               className="h-full"
             >
               <div
-                className={`group relative bg-card border rounded-xl p-6 transition-all duration-300 overflow-hidden h-full flex flex-col ${
+                className={`group relative bg-card border rounded-xl p-4 md:p-6 transition-all duration-300 overflow-hidden h-full flex flex-col ${
                   plan.highlighted
-                    ? "border-primary shadow-xl shadow-primary/20 md:scale-105 z-10"
+                    ? "border-primary shadow-xl shadow-primary/20 lg:scale-105 z-10"
                     : "border-border hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
                 }`}
               >
@@ -139,10 +139,10 @@ const PricingSection = ({ onOpenChat }: PricingSectionProps) => {
                     {plan.priceMonthly !== null ? (
                       <>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-3xl font-bold text-foreground">
+                          <span className="text-2xl md:text-3xl font-bold text-foreground">
                             R$ {isAnnual ? plan.priceAnnual : plan.priceMonthly}
                           </span>
-                          <span className="text-muted-foreground text-sm">/mês</span>
+                          <span className="text-muted-foreground text-xs md:text-sm">/mês</span>
                         </div>
                         {isAnnual && (
                           <p className="text-xs text-muted-foreground mt-1">

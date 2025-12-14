@@ -106,12 +106,12 @@ const Index = () => {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/10 rounded-full blur-3xl opacity-30 pointer-events-none" />
         
         <div className="container mx-auto px-4 relative z-10">
-          <AnimatedSection className="text-center mb-12">
-            <div className="relative min-h-[3.5rem] md:min-h-[4rem] flex items-center justify-center">
+          <AnimatedSection className="text-center mb-8 md:mb-12 px-2">
+            <div className="relative min-h-[4rem] sm:min-h-[3.5rem] md:min-h-[4rem] flex items-center justify-center">
               {Object.entries(heroTitles).map(([key, title]) => (
                 <h1 
                   key={key}
-                  className="absolute inset-0 flex items-center justify-center text-4xl md:text-5xl font-bold text-foreground transition-opacity duration-700 ease-in-out"
+                  className="absolute inset-0 flex items-center justify-center text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground transition-opacity duration-700 ease-in-out px-4"
                   style={{
                     opacity: (hoveredModule === key || (key === 'default' && !hoveredModule)) ? 1 : 0,
                   }}
@@ -120,11 +120,11 @@ const Index = () => {
                 </h1>
               ))}
             </div>
-            <div className="relative min-h-[1.5rem] md:min-h-[2rem] flex items-center justify-center mt-4">
+            <div className="relative min-h-[2.5rem] sm:min-h-[2rem] md:min-h-[2rem] flex items-center justify-center mt-3 md:mt-4">
               {Object.entries(heroSubtitles).map(([key, subtitle]) => (
                 <p 
                   key={key}
-                  className="absolute inset-0 flex items-center justify-center text-muted-foreground text-lg md:text-xl transition-opacity duration-700 ease-in-out max-w-2xl mx-auto"
+                  className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm sm:text-base md:text-lg lg:text-xl transition-opacity duration-700 ease-in-out max-w-2xl mx-auto px-4"
                   style={{
                     opacity: (hoveredModule === key || (key === 'default' && !hoveredModule)) ? 1 : 0,
                   }}
@@ -136,8 +136,8 @@ const Index = () => {
           </AnimatedSection>
 
           {/* Module Cards */}
-          <section id="features" className="max-w-5xl mx-auto">
-            <div className="grid md:grid-cols-3 gap-6 items-stretch">
+          <section id="features" className="max-w-5xl mx-auto px-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 items-stretch">
               {modules.map((module, index) => (
                 <AnimatedSection key={module.title} delay={index * 150} animation="scale" className="h-full">
                   <ModuleCard 
