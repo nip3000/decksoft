@@ -112,7 +112,7 @@ const FloatingChatWidget = ({
             <div className="flex items-center gap-3">
               <img src={chatAvatar} alt="Atendente DeckSoft" className="w-10 h-10 rounded-full object-cover border-2 border-primary/20" />
               <div>
-                
+                <span className="text-sm font-semibold text-foreground">DeckSoft</span>
                 <span className="text-xs text-muted-foreground block -mt-0.5">Ana • Atendente</span>
                 <div className="flex items-center gap-1">
                   <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
