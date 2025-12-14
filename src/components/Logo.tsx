@@ -1,4 +1,4 @@
-import logoIcon from "@/assets/logo-d-bold.png";
+import logoIcon from "@/assets/logo-d-modern.png";
 
 interface LogoProps {
   className?: string;
@@ -8,9 +8,9 @@ interface LogoProps {
 
 const Logo = ({ className, size = "md", showText = true }: LogoProps) => {
   const sizeClasses = {
-    sm: "h-10",
-    md: "h-12",
-    lg: "h-14",
+    sm: "h-8",
+    md: "h-9",
+    lg: "h-11",
   };
 
   const textSizeClasses = {
