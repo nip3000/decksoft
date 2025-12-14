@@ -15,6 +15,7 @@ interface Message {
 
 interface LeadInfo {
   name: string;
+  company: string;
   email: string;
   phone: string;
 }
@@ -58,7 +59,7 @@ const Chat = () => {
   const [searchParams] = useSearchParams();
   const initialMessage = searchParams.get("message") || "";
   
-  const [leadInfo, setLeadInfo] = useState<LeadInfo>({ name: "", email: "", phone: "" });
+  const [leadInfo, setLeadInfo] = useState<LeadInfo>({ name: "", company: "", email: "", phone: "" });
   const [errors, setErrors] = useState<{ email?: string; phone?: string }>({});
   const [hasStartedChat, setHasStartedChat] = useState(false);
   const [isSubmittingLead, setIsSubmittingLead] = useState(false);
@@ -299,6 +300,17 @@ const Chat = () => {
                   placeholder="Seu nome completo"
                   value={leadInfo.name}
                   onChange={(e) => setLeadInfo(prev => ({ ...prev, name: e.target.value }))}
+                  onKeyDown={handleLeadKeyDown}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="company">Empresa <span className="text-muted-foreground text-xs">(opcional)</span></Label>
+                <Input
+                  id="company"
+                  placeholder="Nome da sua empresa"
+                  value={leadInfo.company}
+                  onChange={(e) => setLeadInfo(prev => ({ ...prev, company: e.target.value }))}
                   onKeyDown={handleLeadKeyDown}
                 />
               </div>
