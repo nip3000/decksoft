@@ -37,9 +37,12 @@ const ModuleCard = ({ icon, title, shortDescription, fullDescription, onLearnMor
         <div className={cn(
           "w-12 h-12 rounded-lg flex items-center justify-center shrink-0 transition-all duration-300",
           "bg-gradient-to-br from-primary/20 to-primary/5 text-primary",
-          "group-hover:from-primary group-hover:to-primary/80 group-hover:text-primary-foreground group-hover:shadow-lg group-hover:shadow-primary/30 group-hover:scale-110"
+          "group-hover:from-primary group-hover:to-primary/80 group-hover:text-primary-foreground group-hover:shadow-lg group-hover:shadow-primary/30 group-hover:scale-110",
+          "group-hover:animate-[bounce_0.5s_ease-in-out]"
         )}>
-          {icon}
+          <div className="transition-transform duration-300 group-hover:rotate-12">
+            {icon}
+          </div>
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
