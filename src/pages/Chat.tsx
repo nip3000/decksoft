@@ -393,7 +393,7 @@ const Chat = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="h-screen bg-background flex flex-col overflow-hidden">
       {/* Header */}
       <div className="h-16 border-b border-border flex items-center justify-between px-4 shrink-0 bg-card">
         <div className="flex items-center gap-3">
