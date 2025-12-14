@@ -35,12 +35,11 @@ const ModuleCard = ({ icon, title, shortDescription, fullDescription, onLearnMor
     >
       <div className="relative z-10 flex items-start gap-4">
         <div className={cn(
-          "w-12 h-12 rounded-lg flex items-center justify-center shrink-0 transition-all duration-300",
+          "w-12 h-12 rounded-lg flex items-center justify-center shrink-0 transition-all duration-500 ease-out",
           "bg-gradient-to-br from-primary/20 to-primary/5 text-primary",
-          "group-hover:from-primary group-hover:to-primary/80 group-hover:text-primary-foreground group-hover:shadow-lg group-hover:shadow-primary/30 group-hover:scale-110",
-          "group-hover:animate-[bounce_0.5s_ease-in-out]"
+          "group-hover:from-primary group-hover:to-primary/80 group-hover:text-primary-foreground group-hover:shadow-lg group-hover:shadow-primary/30 group-hover:scale-105"
         )}>
-          <div className="transition-transform duration-300 group-hover:rotate-12">
+          <div className="transition-transform duration-500 ease-out group-hover:scale-110">
             {icon}
           </div>
         </div>
