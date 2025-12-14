@@ -74,17 +74,19 @@ const Index = () => {
 
       {/* Hero Section */}
       <main className="pt-24 pb-16 relative overflow-hidden">
-        {/* Dynamic Background Image */}
-        <div 
-          key={currentBackground}
-          className="absolute inset-0 transition-all duration-700 ease-in-out animate-fade-in"
-          style={{
-            backgroundImage: `url(${currentBackground})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            opacity: 0.35,
-          }}
-        />
+        {/* Dynamic Background Images with Crossfade */}
+        {Object.entries(heroBackgrounds).map(([key, bgImage]) => (
+          <div 
+            key={key}
+            className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+            style={{
+              backgroundImage: `url(${bgImage})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              opacity: (hoveredModule === key || (key === 'default' && !hoveredModule)) ? 0.35 : 0,
+            }}
+          />
+        ))}
         
         {/* Background gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/30 to-background/80 pointer-events-none" />
