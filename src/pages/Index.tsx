@@ -73,6 +73,13 @@ const Index = () => {
     fuel: "ERP para Postos de Combustíveis",
   };
 
+  const heroSubtitles: Record<ModuleKey | "default", string> = {
+    default: "Soluções completas de gestão empresarial para diversos segmentos",
+    construction: "Gestão completa para depósitos, home centers e lojas especializadas",
+    agro: "Soluções para revendas, cooperativas e distribuidoras do agronegócio",
+    fuel: "Sistema especializado para postos e distribuidoras de combustíveis",
+  };
+
   const currentTitle = hoveredModule ? heroTitles[hoveredModule] : heroTitles.default;
   const currentBackground = hoveredModule ? heroBackgrounds[hoveredModule] : heroBackgrounds.default;
 
@@ -113,6 +120,19 @@ const Index = () => {
                 >
                   {title}
                 </h1>
+              ))}
+            </div>
+            <div className="relative min-h-[1.5rem] md:min-h-[2rem] flex items-center justify-center mt-4">
+              {Object.entries(heroSubtitles).map(([key, subtitle]) => (
+                <p 
+                  key={key}
+                  className="absolute inset-0 flex items-center justify-center text-muted-foreground text-lg md:text-xl transition-opacity duration-700 ease-in-out max-w-2xl mx-auto"
+                  style={{
+                    opacity: (hoveredModule === key || (key === 'default' && !hoveredModule)) ? 1 : 0,
+                  }}
+                >
+                  {subtitle}
+                </p>
               ))}
             </div>
           </AnimatedSection>
