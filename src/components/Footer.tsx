@@ -57,14 +57,6 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>
                 <button
-                  onClick={() => scrollToSection("features")}
-                  className="text-muted-foreground hover:text-foreground transition-colors text-sm"
-                >
-                  Funcionalidades
-                </button>
-              </li>
-              <li>
-                <button
                   onClick={() => scrollToSection("testimonials")}
                   className="text-muted-foreground hover:text-foreground transition-colors text-sm"
                 >
@@ -77,6 +69,14 @@ const Footer = () => {
                   className="text-muted-foreground hover:text-foreground transition-colors text-sm"
                 >
                   Planos
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => scrollToSection("faq")}
+                  className="text-muted-foreground hover:text-foreground transition-colors text-sm"
+                >
+                  FAQ
                 </button>
               </li>
             </ul>
