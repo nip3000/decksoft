@@ -52,7 +52,7 @@ const Index = () => {
 
           {/* Module Cards */}
           <section id="features" className="max-w-5xl mx-auto">
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-3 gap-6 items-start">
               {modules.map((module) => (
                 <ModuleCard key={module.title} {...module} />
               ))}
