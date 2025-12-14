@@ -182,11 +182,11 @@ const Index = () => {
       <section className="py-16 relative overflow-hidden">
         {/* Background image */}
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-15"
+          className="absolute inset-0 bg-cover bg-center opacity-20"
           style={{ backgroundImage: `url(${ctaHandshake})` }}
         />
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/60 to-background/80" />
         <div className="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 bg-primary/20 rounded-full blur-3xl opacity-30 pointer-events-none" />
         <div className="absolute top-1/2 right-0 -translate-y-1/2 w-96 h-96 bg-primary/20 rounded-full blur-3xl opacity-30 pointer-events-none" />
         
