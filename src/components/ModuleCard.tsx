@@ -9,10 +9,21 @@ interface ModuleCardProps {
   shortDescription: string;
   fullDescription: string;
   onLearnMore?: (message: string) => void;
+  onHover?: (isHovering: boolean) => void;
 }
 
-const ModuleCard = ({ icon, title, shortDescription, fullDescription, onLearnMore }: ModuleCardProps) => {
+const ModuleCard = ({ icon, title, shortDescription, fullDescription, onLearnMore, onHover }: ModuleCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsExpanded(true);
+    onHover?.(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsExpanded(false);
+    onHover?.(false);
+  };
 
   const handleLearnMore = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -23,8 +34,8 @@ const ModuleCard = ({ icon, title, shortDescription, fullDescription, onLearnMor
 
   return (
     <div
-      onMouseEnter={() => setIsExpanded(true)}
-      onMouseLeave={() => setIsExpanded(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       className={cn(
         "relative bg-card border border-border rounded-xl p-6 cursor-pointer transition-all duration-300 overflow-hidden group",
         "hover:shadow-2xl hover:shadow-primary/15 hover:border-primary/40 hover:-translate-y-2",
