@@ -41,12 +41,17 @@ const ModuleCard = ({ icon, title, shortDescription, fullDescription }: ModuleCa
 
       <div
         className={cn(
-          "grid transition-all duration-300",
-          isExpanded ? "grid-rows-[1fr] mt-4" : "grid-rows-[0fr]"
+          "grid transition-all duration-300 ease-out",
+          isExpanded ? "grid-rows-[1fr] mt-4 opacity-100" : "grid-rows-[0fr] opacity-0"
         )}
       >
         <div className="overflow-hidden">
-          <div className="pt-4 border-t border-border">
+          <div 
+            className={cn(
+              "pt-4 border-t border-border transition-all duration-300 ease-out",
+              isExpanded ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
+            )}
+          >
             <p className="text-muted-foreground leading-relaxed">{fullDescription}</p>
           </div>
         </div>
