@@ -11,6 +11,7 @@ interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
+  timestamp: string; // ISO string in Brasilia timezone (not displayed)
 }
 
 interface LeadInfo {
@@ -52,6 +53,15 @@ const formatPhone = (value: string): string => {
     return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
   }
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+};
+
+// Get current timestamp in Brasilia timezone (UTC-3)
+const getBrasiliaTimestamp = (): string => {
+  const now = new Date();
+  const brasiliaOffset = -3 * 60; // UTC-3 in minutes
+  const localOffset = now.getTimezoneOffset();
+  const brasiliaTime = new Date(now.getTime() + (localOffset + brasiliaOffset) * 60000);
+  return brasiliaTime.toISOString().replace('Z', '-03:00');
 };
 
 const Chat = () => {
@@ -132,7 +142,8 @@ const Chat = () => {
         setMessages(prev => [...prev, {
           id: crypto.randomUUID(),
           role: "assistant",
-          content: greetingMessages[i]
+          content: greetingMessages[i],
+          timestamp: getBrasiliaTimestamp()
         }]);
         setGreetingIndex(i + 1);
         
@@ -176,6 +187,7 @@ const Chat = () => {
       id: crypto.randomUUID(),
       role: "user",
       content: content.trim(),
+      timestamp: getBrasiliaTimestamp(),
     };
 
     setMessages(prev => [...prev, userMessage]);
@@ -189,6 +201,7 @@ const Chat = () => {
           id: crypto.randomUUID(),
           role: "assistant",
           content: "Obrigado pelo seu interesse! No momento, nosso chat está sendo configurado. Em breve, nossa equipe entrará em contato. Enquanto isso, você pode explorar nosso site para conhecer melhor nossas soluções.",
+          timestamp: getBrasiliaTimestamp(),
         };
         setMessages(prev => [...prev, assistantMessage]);
       } else {
@@ -196,7 +209,8 @@ const Chat = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ 
-            message: userMessage.content, 
+            message: userMessage.content,
+            timestamp: userMessage.timestamp,
             history: messages,
             lead: leadInfo
           }),
@@ -209,6 +223,7 @@ const Chat = () => {
           id: crypto.randomUUID(),
           role: "assistant",
           content: data.response || data.message || "Desculpe, não consegui processar sua mensagem.",
+          timestamp: getBrasiliaTimestamp(),
         };
         setMessages(prev => [...prev, assistantMessage]);
       }
@@ -218,6 +233,7 @@ const Chat = () => {
         id: crypto.randomUUID(),
         role: "assistant",
         content: "Desculpe, ocorreu um erro. Tente novamente mais tarde.",
+        timestamp: getBrasiliaTimestamp(),
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
