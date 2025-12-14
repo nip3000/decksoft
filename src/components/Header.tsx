@@ -21,9 +21,9 @@ const Header = ({ onOpenChat }: HeaderProps) => {
   };
 
   const navLinks = [
-    { label: "Funcionalidades", id: "features" },
     { label: "Depoimentos", id: "testimonials" },
     { label: "Planos", id: "pricing" },
+    { label: "FAQ", id: "faq" },
   ];
 
   return (
