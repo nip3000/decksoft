@@ -450,12 +450,23 @@ const Chat = () => {
                     <p className="whitespace-pre-wrap">{message.content}</p>
                   </div>
                   {message.role === "user" && (
-                    <div className="flex items-center gap-1 mt-1 mr-1">
-                      {message.status === "read" ? (
-                        <CheckCheck className="w-4 h-4 text-primary" />
-                      ) : (
-                        <Check className="w-4 h-4 text-muted-foreground" />
-                      )}
+                    <div className="flex items-center gap-1 mt-1 mr-1 relative h-4">
+                      <Check 
+                        className={cn(
+                          "w-4 h-4 absolute transition-all duration-300",
+                          message.status === "read" 
+                            ? "opacity-0 scale-75" 
+                            : "opacity-100 scale-100 text-muted-foreground"
+                        )} 
+                      />
+                      <CheckCheck 
+                        className={cn(
+                          "w-4 h-4 absolute transition-all duration-300",
+                          message.status === "read" 
+                            ? "opacity-100 scale-100 text-primary" 
+                            : "opacity-0 scale-75"
+                        )} 
+                      />
                     </div>
                   )}
                 </div>
