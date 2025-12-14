@@ -65,10 +65,10 @@ const Index = () => {
   };
 
   const heroTitles: Record<ModuleKey | "default", React.ReactNode> = {
-    default: <>Hub de Soluções <span className="text-primary ml-1">DeckSoft</span></>,
-    construction: <>ERP para <span className="text-primary ml-1">Materiais de Construção</span></>,
-    agro: <>ERP para <span className="text-primary ml-1">Agronegócios</span></>,
-    fuel: <>ERP para <span className="text-primary ml-1">Postos de Combustíveis</span></>,
+    default: <>Hub de Soluções <span className="text-primary">DeckSoft</span></>,
+    construction: <>ERP para <span className="text-primary">Materiais de Construção</span></>,
+    agro: <>ERP para <span className="text-primary">Agronegócios</span></>,
+    fuel: <>ERP para <span className="text-primary">Postos de Combustíveis</span></>,
   };
 
   const heroSubtitles: Record<ModuleKey | "default", string> = {
@@ -107,24 +107,24 @@ const Index = () => {
         
         <div className="container mx-auto px-4 relative z-10">
           <AnimatedSection className="text-center mb-8 md:mb-12 px-2">
-            <div className="relative min-h-[4rem] sm:min-h-[3.5rem] md:min-h-[4rem] flex items-center justify-center">
+            <div className="relative min-h-[5rem] sm:min-h-[4rem] md:min-h-[4rem] flex items-center justify-center">
               {Object.entries(heroTitles).map(([key, title]) => (
                 <h1 
                   key={key}
-                  className="absolute inset-0 flex items-center justify-center text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground transition-opacity duration-700 ease-in-out px-4"
+                  className="absolute inset-0 flex items-center justify-center text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground transition-opacity duration-700 ease-in-out px-2 leading-tight text-center"
                   style={{
                     opacity: (hoveredModule === key || (key === 'default' && !hoveredModule)) ? 1 : 0,
                   }}
                 >
-                  {title}
+                  <span className="block">{title}</span>
                 </h1>
               ))}
             </div>
-            <div className="relative min-h-[2.5rem] sm:min-h-[2rem] md:min-h-[2rem] flex items-center justify-center mt-3 md:mt-4">
+            <div className="relative min-h-[3rem] sm:min-h-[2.5rem] md:min-h-[2rem] flex items-center justify-center mt-2 md:mt-4">
               {Object.entries(heroSubtitles).map(([key, subtitle]) => (
                 <p 
                   key={key}
-                  className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm sm:text-base md:text-lg lg:text-xl transition-opacity duration-700 ease-in-out max-w-2xl mx-auto px-4"
+                  className="absolute inset-0 flex items-center justify-center text-muted-foreground text-xs sm:text-sm md:text-base lg:text-xl transition-opacity duration-700 ease-in-out max-w-2xl mx-auto px-4 leading-relaxed"
                   style={{
                     opacity: (hoveredModule === key || (key === 'default' && !hoveredModule)) ? 1 : 0,
                   }}
