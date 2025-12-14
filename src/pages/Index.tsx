@@ -162,11 +162,6 @@ const Index = () => {
       {/* Stats Section */}
       <StatsSection />
 
-      {/* Pricing Section */}
-      <AnimatedSection animation="fade-up">
-        <PricingSection onOpenChat={openChat} />
-      </AnimatedSection>
-
       {/* Testimonials Section */}
       <AnimatedSection animation="fade-up">
         <TestimonialsSection />
@@ -175,6 +170,11 @@ const Index = () => {
       {/* Partners Section */}
       <AnimatedSection animation="fade-up">
         <PartnersSection />
+      </AnimatedSection>
+
+      {/* Pricing Section */}
+      <AnimatedSection animation="fade-up">
+        <PricingSection onOpenChat={openChat} />
       </AnimatedSection>
 
       {/* CTA Section */}
