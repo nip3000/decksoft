@@ -22,6 +22,7 @@ const FloatingChatWidget = ({
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [visibleMessages, setVisibleMessages] = useState<number[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -96,12 +97,8 @@ const FloatingChatWidget = ({
       clearTimeout(timer2b);
     };
   }, [isAnimating]);
-  const handleDismiss = () => {
-    setIsAnimating(false);
-    setTimeout(() => {
-      setIsVisible(false);
-      setIsDismissed(true);
-    }, 300);
+  const handleToggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
   };
   const handleOpenChat = () => {
     setIsAnimating(false);
@@ -113,9 +110,13 @@ const FloatingChatWidget = ({
   if (!isVisible && !isDismissed) return null;
   return <div className="fixed bottom-0 right-4 z-50">
       {/* Chat bubble popup */}
-      {isVisible && <div className={`bg-card border border-border rounded-t-2xl shadow-2xl shadow-primary/20 p-4 w-80 transition-all duration-500 ease-out ${isAnimating ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"}`}>
+      {isVisible && (
+        <div 
+          className={`bg-card border border-border rounded-t-2xl shadow-2xl shadow-primary/20 w-80 transition-all duration-500 ease-out cursor-pointer ${isAnimating ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"}`}
+          onClick={isCollapsed ? handleToggleCollapse : undefined}
+        >
           {/* Header */}
-          <div className="flex items-center justify-between mb-4 pb-3 border-b border-border">
+          <div className="flex items-center justify-between p-4 pb-3 border-b border-border">
             <div className="flex items-center gap-3">
               <img src={chatAvatar} alt="Atendente DeckSoft" className="w-10 h-10 rounded-full object-cover border-2 border-primary/20" />
               <div>
@@ -126,43 +127,53 @@ const FloatingChatWidget = ({
                 </div>
               </div>
             </div>
-            <button onClick={handleDismiss} className="text-muted-foreground hover:text-foreground transition-colors p-1" aria-label="Fechar">
-              <X className="w-4 h-4" />
+            <button 
+              onClick={(e) => { e.stopPropagation(); handleToggleCollapse(); }} 
+              className="text-muted-foreground hover:text-foreground transition-colors p-1" 
+              aria-label={isCollapsed ? "Expandir" : "Minimizar"}
+            >
+              <X className={`w-4 h-4 transition-transform duration-300 ${isCollapsed ? "rotate-45" : ""}`} />
             </button>
           </div>
 
-          {/* Messages area */}
-          <div className="space-y-3 mb-4 max-h-48 overflow-y-auto scroll-smooth">
-            {chatMessages.map((message, index) => <div key={index} className={`transition-all duration-500 ease-out ${visibleMessages.includes(index) ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 h-0 overflow-hidden"}`}>
-                <div className="flex items-end gap-2">
-                  <img src={chatAvatar} alt="Atendente" className="w-7 h-7 rounded-full object-cover flex-shrink-0" />
-                  <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm text-foreground max-w-[85%]">
-                    {message}
+          {/* Collapsible content */}
+          <div className={`transition-all duration-500 ease-out overflow-hidden ${isCollapsed ? "max-h-0" : "max-h-[400px]"}`}>
+            {/* Messages area */}
+            <div className="space-y-3 p-4 pt-3 pb-0 max-h-48 overflow-y-auto scroll-smooth">
+              {chatMessages.map((message, index) => (
+                <div 
+                  key={index} 
+                  className={`transition-all duration-500 ease-out ${visibleMessages.includes(index) ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 h-0 overflow-hidden"}`}
+                >
+                  <div className="flex items-end gap-2">
+                    <img src={chatAvatar} alt="Atendente" className="w-7 h-7 rounded-full object-cover flex-shrink-0" />
+                    <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm text-foreground max-w-[85%]">
+                      {message}
+                    </div>
                   </div>
                 </div>
-              </div>)}
-            
-            {/* Typing indicator */}
-            {isTyping && <div className="animate-fade-in">
-                <TypingIndicator />
-              </div>}
-            
-            <div ref={messagesEndRef} />
-          </div>
+              ))}
+              
+              {/* Typing indicator */}
+              {isTyping && (
+                <div className="animate-fade-in">
+                  <TypingIndicator />
+                </div>
+              )}
+              
+              <div ref={messagesEndRef} />
+            </div>
 
-          {/* CTA Button - only show after all messages */}
-          <div className={`transition-all duration-500 ${visibleMessages.length === 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
-            <Button onClick={handleOpenChat} className="w-full group" size="sm">
-              Iniciar conversa
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            {/* CTA Button - only show after all messages */}
+            <div className={`p-4 pt-3 transition-all duration-500 ${visibleMessages.length === 3 ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+              <Button onClick={handleOpenChat} className="w-full group" size="sm">
+                Iniciar conversa
+                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </div>
           </div>
-        </div>}
-
-      {/* Floating chat icon (visible after popup dismissed) */}
-      {isDismissed && <button onClick={handleOpenChat} className="mb-6 w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-110 transition-transform animate-fade-in" aria-label="Abrir chat">
-          <MessageCircle className="w-6 h-6" />
-        </button>}
+        </div>
+      )}
     </div>;
 };
 export default FloatingChatWidget;
