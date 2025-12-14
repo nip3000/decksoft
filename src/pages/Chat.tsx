@@ -427,7 +427,7 @@ const Chat = () => {
               <div
                 key={message.id}
                 className={cn(
-                  "flex",
+                  "flex items-start gap-2",
                   message.role === "user" ? "justify-end" : "justify-start"
                 )}
               >
@@ -435,7 +435,7 @@ const Chat = () => {
                   <img 
                     src={chatAvatar} 
                     alt="Atendente" 
-                    className="w-8 h-8 rounded-full object-cover flex-shrink-0" 
+                    className="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-0.5" 
                   />
                 )}
                 <div className="flex flex-col items-end">
