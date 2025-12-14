@@ -13,7 +13,7 @@ interface Message {
   content: string;
 }
 
-const WEBHOOK_URL = ""; // Configure your n8n webhook URL here
+const WEBHOOK_URL = "https://repetiva-n8n.hfnc82.easypanel.host/webhook-test/240b36f9-9d6d-4946-864b-8b681f3ec906";
 
 const greetingMessages = [
   "Olá! 👋 Seja bem-vindo(a) à DeckSoft!",
