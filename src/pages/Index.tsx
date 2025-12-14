@@ -6,6 +6,7 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import PricingSection from "@/components/PricingSection";
 import Footer from "@/components/Footer";
 import FullScreenChat from "@/components/FullScreenChat";
+import AnimatedSection from "@/components/AnimatedSection";
 
 // Configure your n8n webhook URL here
 const N8N_WEBHOOK_URL = "https://your-n8n-instance.com/webhook/decksoft-chat";
@@ -50,20 +51,22 @@ const Index = () => {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/10 rounded-full blur-3xl opacity-30 pointer-events-none" />
         
         <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-12">
+          <AnimatedSection className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
               ERP completo para seu negócio
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Soluções especializadas em gestão empresarial para os segmentos que mais crescem no Brasil
             </p>
-          </div>
+          </AnimatedSection>
 
           {/* Module Cards */}
           <section id="features" className="max-w-5xl mx-auto">
             <div className="grid md:grid-cols-3 gap-6 items-start">
-              {modules.map((module) => (
-                <ModuleCard key={module.title} {...module} />
+              {modules.map((module, index) => (
+                <AnimatedSection key={module.title} delay={index * 150} animation="scale">
+                  <ModuleCard {...module} />
+                </AnimatedSection>
               ))}
             </div>
           </section>
@@ -84,18 +87,20 @@ const Index = () => {
         <div className="absolute top-1/2 right-0 -translate-y-1/2 w-96 h-96 bg-primary/20 rounded-full blur-3xl opacity-30 pointer-events-none" />
         
         <div className="container mx-auto px-4 text-center relative z-10">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-            Pronto para transformar seu negócio?
-          </h2>
-          <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
-            Converse com nosso assistente virtual e descubra qual solução é ideal para você.
-          </p>
-          <button
-            onClick={openChat}
-            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium hover:bg-primary/90 transition-all duration-300 hover:shadow-lg hover:shadow-primary/30"
-          >
-            Iniciar conversa agora
-          </button>
+          <AnimatedSection>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+              Pronto para transformar seu negócio?
+            </h2>
+            <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
+              Converse com nosso assistente virtual e descubra qual solução é ideal para você.
+            </p>
+            <button
+              onClick={openChat}
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium hover:bg-primary/90 transition-all duration-300 hover:shadow-lg hover:shadow-primary/30"
+            >
+              Iniciar conversa agora
+            </button>
+          </AnimatedSection>
         </div>
       </section>
 
