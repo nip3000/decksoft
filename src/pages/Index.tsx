@@ -66,6 +66,14 @@ const Index = () => {
     setIsChatOpen(true);
   };
 
+  const heroTitles: Record<ModuleKey | "default", string> = {
+    default: "Hub de Soluções DeckSoft",
+    construction: "ERP para Materiais de Construção",
+    agro: "ERP para Agronegócios",
+    fuel: "ERP para Postos de Combustíveis",
+  };
+
+  const currentTitle = hoveredModule ? heroTitles[hoveredModule] : heroTitles.default;
   const currentBackground = hoveredModule ? heroBackgrounds[hoveredModule] : heroBackgrounds.default;
 
   return (
@@ -94,8 +102,8 @@ const Index = () => {
         
         <div className="container mx-auto px-4 relative z-10">
           <AnimatedSection className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              ERP completo para seu negócio
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 transition-all duration-500 ease-out min-h-[3.5rem] md:min-h-[4rem]">
+              {currentTitle}
             </h1>
           </AnimatedSection>
 
