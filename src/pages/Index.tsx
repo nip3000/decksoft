@@ -102,9 +102,19 @@ const Index = () => {
         
         <div className="container mx-auto px-4 relative z-10">
           <AnimatedSection className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 transition-all duration-500 ease-out min-h-[3.5rem] md:min-h-[4rem]">
-              {currentTitle}
-            </h1>
+            <div className="relative min-h-[3.5rem] md:min-h-[4rem] flex items-center justify-center">
+              {Object.entries(heroTitles).map(([key, title]) => (
+                <h1 
+                  key={key}
+                  className="absolute inset-0 flex items-center justify-center text-4xl md:text-5xl font-bold text-foreground transition-opacity duration-700 ease-in-out"
+                  style={{
+                    opacity: (hoveredModule === key || (key === 'default' && !hoveredModule)) ? 1 : 0,
+                  }}
+                >
+                  {title}
+                </h1>
+              ))}
+            </div>
           </AnimatedSection>
 
           {/* Module Cards */}
