@@ -420,9 +420,9 @@ const Chat = () => {
         <div 
           ref={scrollRef}
           onScroll={handleScroll}
-          className="h-full overflow-y-auto p-4"
+          className="h-full overflow-y-auto p-4 pb-6"
         >
-          <div className="max-w-3xl mx-auto space-y-4">
+          <div className="max-w-3xl mx-auto space-y-3">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -435,7 +435,7 @@ const Chat = () => {
                   <img 
                     src={chatAvatar} 
                     alt="Atendente" 
-                    className="w-8 h-8 rounded-full object-cover flex-shrink-0 mr-2 mt-1" 
+                    className="w-8 h-8 rounded-full object-cover flex-shrink-0 mr-1.5" 
                   />
                 )}
                 <div className="flex flex-col items-end">
