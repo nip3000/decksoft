@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Building2, Wheat, Fuel } from "lucide-react";
 import Header from "@/components/Header";
 import ModuleCard from "@/components/ModuleCard";
+import TestimonialsSection from "@/components/TestimonialsSection";
+import PricingSection from "@/components/PricingSection";
 import FullScreenChat from "@/components/FullScreenChat";
 
 // Configure your n8n webhook URL here
@@ -34,9 +36,11 @@ const modules = [
 const Index = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
 
+  const openChat = () => setIsChatOpen(true);
+
   return (
     <div className="min-h-screen bg-background">
-      <Header onOpenChat={() => setIsChatOpen(true)} />
+      <Header onOpenChat={openChat} />
 
       {/* Hero Section */}
       <main className="pt-24 pb-16">
@@ -58,21 +62,32 @@ const Index = () => {
               ))}
             </div>
           </section>
-
-          {/* CTA Section */}
-          <section className="mt-16 text-center">
-            <p className="text-muted-foreground mb-4">
-              Tem dúvidas sobre qual módulo é ideal para você?
-            </p>
-            <button
-              onClick={() => setIsChatOpen(true)}
-              className="text-primary hover:text-primary/80 font-medium underline underline-offset-4 transition-colors"
-            >
-              Converse com nosso assistente virtual
-            </button>
-          </section>
         </div>
       </main>
+
+      {/* Testimonials Section */}
+      <TestimonialsSection />
+
+      {/* Pricing Section */}
+      <PricingSection onOpenChat={openChat} />
+
+      {/* CTA Section */}
+      <section className="py-16 bg-muted/30">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+            Pronto para transformar seu negócio?
+          </h2>
+          <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
+            Converse com nosso assistente virtual e descubra qual solução é ideal para você.
+          </p>
+          <button
+            onClick={openChat}
+            className="text-primary hover:text-primary/80 font-medium underline underline-offset-4 transition-colors"
+          >
+            Iniciar conversa agora
+          </button>
+        </div>
+      </section>
 
       {/* Full Screen Chat */}
       <FullScreenChat
