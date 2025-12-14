@@ -71,10 +71,10 @@ const Index = () => {
   };
 
   const heroTitles: Record<ModuleKey | "default", React.ReactNode> = {
-    default: <>Hub de Soluções <span className="text-primary">DeckSoft</span></>,
-    construction: <>ERP para <span className="text-primary">Materiais de Construção</span></>,
-    agro: <>ERP para <span className="text-primary">Agronegócios</span></>,
-    fuel: <>ERP para Postos de <span className="text-primary">Combustíveis</span></>,
+    default: <>Hub de Soluções <span className="text-primary ml-1">DeckSoft</span></>,
+    construction: <>ERP para <span className="text-primary ml-1">Materiais de Construção</span></>,
+    agro: <>ERP para <span className="text-primary ml-1">Agronegócios</span></>,
+    fuel: <>ERP para <span className="text-primary ml-1">Postos de Combustíveis</span></>,
   };
 
   const heroSubtitles: Record<ModuleKey | "default", string> = {
