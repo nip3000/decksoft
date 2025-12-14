@@ -32,9 +32,9 @@ const ModuleCard = ({ icon, title, shortDescription, fullDescription }: ModuleCa
         )}>
           {icon}
         </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between gap-2">
-            <h3 className="text-lg font-semibold text-card-foreground">{title}</h3>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="text-base font-semibold text-card-foreground line-clamp-1">{title}</h3>
             <ChevronDown
               className={cn(
                 "w-5 h-5 text-muted-foreground transition-transform duration-300 shrink-0",
@@ -42,7 +42,7 @@ const ModuleCard = ({ icon, title, shortDescription, fullDescription }: ModuleCa
               )}
             />
           </div>
-          <p className="text-muted-foreground mt-1">{shortDescription}</p>
+          <p className="text-muted-foreground text-sm mt-1 line-clamp-2 min-h-[2.5rem]">{shortDescription}</p>
         </div>
       </div>
 
