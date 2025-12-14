@@ -101,9 +101,9 @@ const Index = () => {
 
           {/* Module Cards */}
           <section id="features" className="max-w-5xl mx-auto">
-            <div className="grid md:grid-cols-3 gap-6 items-start">
+            <div className="grid md:grid-cols-3 gap-6 items-stretch">
               {modules.map((module, index) => (
-                <AnimatedSection key={module.title} delay={index * 150} animation="scale">
+                <AnimatedSection key={module.title} delay={index * 150} animation="scale" className="h-full">
                   <ModuleCard 
                     icon={module.icon}
                     title={module.title}
