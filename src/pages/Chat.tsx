@@ -27,12 +27,39 @@ const greetingMessages = [
   "Como posso ajudá-lo(a) hoje?"
 ];
 
+// Validation helpers
+const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+const isValidPhone = (phone: string): boolean => {
+  const digits = phone.replace(/\D/g, "");
+  return digits.length >= 10 && digits.length <= 11;
+};
+
+const formatPhone = (value: string): string => {
+  const digits = value.replace(/\D/g, "").slice(0, 11);
+  
+  if (digits.length <= 2) {
+    return digits.length ? `(${digits}` : "";
+  }
+  if (digits.length <= 7) {
+    return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  }
+  if (digits.length <= 10) {
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+  }
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+};
+
 const Chat = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const initialMessage = searchParams.get("message") || "";
   
   const [leadInfo, setLeadInfo] = useState<LeadInfo>({ name: "", email: "", phone: "" });
+  const [errors, setErrors] = useState<{ email?: string; phone?: string }>({});
   const [hasStartedChat, setHasStartedChat] = useState(false);
   const [isSubmittingLead, setIsSubmittingLead] = useState(false);
   
@@ -46,8 +73,28 @@ const Chat = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const hasInitialized = useRef(false);
 
+  const validateForm = (): boolean => {
+    const newErrors: { email?: string; phone?: string } = {};
+    
+    if (!isValidEmail(leadInfo.email)) {
+      newErrors.email = "Digite um e-mail válido";
+    }
+    if (!isValidPhone(leadInfo.phone)) {
+      newErrors.phone = "Digite um telefone válido";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const isFormValid = (): boolean => {
+    return leadInfo.name.trim().length > 0 && 
+           isValidEmail(leadInfo.email) && 
+           isValidPhone(leadInfo.phone);
+  };
+
   const startChat = async () => {
-    if (!leadInfo.name.trim() || !leadInfo.email.trim() || !leadInfo.phone.trim()) return;
+    if (!validateForm() || !leadInfo.name.trim()) return;
     
     setIsSubmittingLead(true);
     
@@ -187,10 +234,21 @@ const Chat = () => {
   };
 
   const handleLeadKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && leadInfo.name.trim() && leadInfo.email.trim() && leadInfo.phone.trim()) {
+    if (e.key === "Enter" && isFormValid()) {
       e.preventDefault();
       startChat();
     }
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhone(e.target.value);
+    setLeadInfo(prev => ({ ...prev, phone: formatted }));
+    if (errors.phone) setErrors(prev => ({ ...prev, phone: undefined }));
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLeadInfo(prev => ({ ...prev, email: e.target.value }));
+    if (errors.email) setErrors(prev => ({ ...prev, email: undefined }));
   };
 
   // Lead form view
@@ -245,33 +303,41 @@ const Chat = () => {
                 />
               </div>
               
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label htmlFor="email">E-mail</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="seu@email.com"
                   value={leadInfo.email}
-                  onChange={(e) => setLeadInfo(prev => ({ ...prev, email: e.target.value }))}
+                  onChange={handleEmailChange}
                   onKeyDown={handleLeadKeyDown}
+                  className={errors.email ? "border-destructive" : ""}
                 />
+                {errors.email && (
+                  <p className="text-xs text-destructive">{errors.email}</p>
+                )}
               </div>
               
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label htmlFor="phone">Telefone</Label>
                 <Input
                   id="phone"
                   type="tel"
                   placeholder="(00) 00000-0000"
                   value={leadInfo.phone}
-                  onChange={(e) => setLeadInfo(prev => ({ ...prev, phone: e.target.value }))}
+                  onChange={handlePhoneChange}
                   onKeyDown={handleLeadKeyDown}
+                  className={errors.phone ? "border-destructive" : ""}
                 />
+                {errors.phone && (
+                  <p className="text-xs text-destructive">{errors.phone}</p>
+                )}
               </div>
 
               <Button 
                 onClick={startChat} 
-                disabled={!leadInfo.name.trim() || !leadInfo.email.trim() || !leadInfo.phone.trim() || isSubmittingLead}
+                disabled={!isFormValid() || isSubmittingLead}
                 className="w-full mt-2"
                 size="lg"
               >
