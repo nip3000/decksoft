@@ -76,18 +76,18 @@ const Index = () => {
       <main className="pt-24 pb-16 relative overflow-hidden">
         {/* Dynamic Background Image */}
         <div 
-          className="absolute inset-0 transition-opacity duration-700 ease-in-out"
+          key={currentBackground}
+          className="absolute inset-0 transition-all duration-700 ease-in-out animate-fade-in"
           style={{
             backgroundImage: `url(${currentBackground})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            opacity: 0.15,
-            filter: 'blur(2px)',
+            opacity: 0.35,
           }}
         />
         
         {/* Background gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/30 to-background/80 pointer-events-none" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/10 rounded-full blur-3xl opacity-30 pointer-events-none" />
         
         <div className="container mx-auto px-4 relative z-10">
