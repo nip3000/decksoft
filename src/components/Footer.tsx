@@ -8,11 +8,11 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-card border-t border-border py-12">
+    <footer className="bg-card border-t border-border py-8 md:py-12">
       <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {/* Brand */}
-          <div className="md:col-span-1">
+          <div className="col-span-2 md:col-span-1">
             <div className="mb-4">
               <Logo size="lg" />
             </div>
@@ -53,12 +53,12 @@ const Footer = () => {
 
           {/* Navigation */}
           <div>
-            <h4 className="font-semibold text-card-foreground mb-4">Navegação</h4>
-            <ul className="space-y-2">
+            <h4 className="font-semibold text-card-foreground mb-3 md:mb-4 text-sm md:text-base">Navegação</h4>
+            <ul className="space-y-1 md:space-y-2">
               <li>
                 <button
                   onClick={() => scrollToSection("testimonials")}
-                  className="text-muted-foreground hover:text-foreground transition-colors text-sm"
+                  className="text-muted-foreground hover:text-foreground transition-colors text-xs md:text-sm"
                 >
                   Depoimentos
                 </button>
@@ -66,7 +66,7 @@ const Footer = () => {
               <li>
                 <button
                   onClick={() => scrollToSection("pricing")}
-                  className="text-muted-foreground hover:text-foreground transition-colors text-sm"
+                  className="text-muted-foreground hover:text-foreground transition-colors text-xs md:text-sm"
                 >
                   Planos
                 </button>
@@ -74,7 +74,7 @@ const Footer = () => {
               <li>
                 <button
                   onClick={() => scrollToSection("faq")}
-                  className="text-muted-foreground hover:text-foreground transition-colors text-sm"
+                  className="text-muted-foreground hover:text-foreground transition-colors text-xs md:text-sm"
                 >
                   FAQ
                 </button>
@@ -84,27 +84,26 @@ const Footer = () => {
 
           {/* Modules */}
           <div>
-            <h4 className="font-semibold text-card-foreground mb-4">Módulos</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <h4 className="font-semibold text-card-foreground mb-3 md:mb-4 text-sm md:text-base">Módulos</h4>
+            <ul className="space-y-1 md:space-y-2 text-xs md:text-sm text-muted-foreground">
               <li>Materiais de Construção</li>
               <li>Agronegócios</li>
               <li>Combustíveis</li>
             </ul>
           </div>
 
-          {/* Contact */}
-          <div>
-            <h4 className="font-semibold text-card-foreground mb-4">Contato</h4>
-            <ul className="space-y-3">
-              <li className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Mail className="w-4 h-4 text-primary" />
+          <div className="col-span-2 sm:col-span-1">
+            <h4 className="font-semibold text-card-foreground mb-3 md:mb-4 text-sm md:text-base">Contato</h4>
+            <ul className="space-y-2 md:space-y-3">
+              <li className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground break-all">
+                <Mail className="w-4 h-4 text-primary shrink-0" />
                 contato@decksoft.com.br
               </li>
-              <li className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Phone className="w-4 h-4 text-primary" />
+              <li className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
+                <Phone className="w-4 h-4 text-primary shrink-0" />
                 (11) 4000-0000
               </li>
-              <li className="flex items-start gap-2 text-sm text-muted-foreground">
+              <li className="flex items-start gap-2 text-xs md:text-sm text-muted-foreground">
                 <MapPin className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                 São Paulo, SP - Brasil
               </li>
@@ -113,11 +112,11 @@ const Footer = () => {
         </div>
 
         {/* Bottom */}
-        <div className="mt-12 pt-6 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">
+        <div className="mt-8 md:mt-12 pt-4 md:pt-6 border-t border-border flex flex-col md:flex-row justify-between items-center gap-3 md:gap-4">
+          <p className="text-xs md:text-sm text-muted-foreground text-center md:text-left">
             © {new Date().getFullYear()} DeckSoft. Todos os direitos reservados.
           </p>
-          <div className="flex gap-6 text-sm">
+          <div className="flex gap-4 md:gap-6 text-xs md:text-sm">
             <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
               Política de Privacidade
             </a>
