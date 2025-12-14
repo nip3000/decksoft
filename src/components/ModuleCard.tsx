@@ -17,12 +17,19 @@ const ModuleCard = ({ icon, title, shortDescription, fullDescription }: ModuleCa
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
       className={cn(
-        "bg-card border border-border rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:border-primary/50",
-        isExpanded && "ring-2 ring-primary/20"
+        "relative bg-card border border-border rounded-xl p-6 cursor-pointer transition-all duration-300 overflow-hidden group",
+        "hover:shadow-xl hover:shadow-primary/10 hover:border-primary/30",
+        "before:absolute before:inset-0 before:bg-gradient-to-br before:from-primary/5 before:to-transparent before:opacity-0 before:transition-opacity before:duration-300",
+        "hover:before:opacity-100",
+        isExpanded && "ring-2 ring-primary/20 shadow-lg shadow-primary/10"
       )}
     >
-      <div className="flex items-start gap-4">
-        <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0">
+      <div className="relative z-10 flex items-start gap-4">
+        <div className={cn(
+          "w-12 h-12 rounded-lg flex items-center justify-center shrink-0 transition-all duration-300",
+          "bg-gradient-to-br from-primary/20 to-primary/5 text-primary",
+          "group-hover:from-primary group-hover:to-primary/80 group-hover:text-primary-foreground group-hover:shadow-lg group-hover:shadow-primary/30"
+        )}>
           {icon}
         </div>
         <div className="flex-1 min-w-0">
@@ -41,14 +48,14 @@ const ModuleCard = ({ icon, title, shortDescription, fullDescription }: ModuleCa
 
       <div
         className={cn(
-          "grid transition-all duration-300 ease-out",
+          "relative z-10 grid transition-all duration-300 ease-out",
           isExpanded ? "grid-rows-[1fr] mt-4 opacity-100" : "grid-rows-[0fr] opacity-0"
         )}
       >
         <div className="overflow-hidden">
           <div 
             className={cn(
-              "pt-4 border-t border-border transition-all duration-300 ease-out",
+              "pt-4 border-t border-border/50 transition-all duration-300 ease-out",
               isExpanded ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
             )}
           >

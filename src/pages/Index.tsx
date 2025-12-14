@@ -44,8 +44,12 @@ const Index = () => {
       <Header onOpenChat={openChat} />
 
       {/* Hero Section */}
-      <main className="pt-24 pb-16">
-        <div className="container mx-auto px-4">
+      <main className="pt-24 pb-16 relative overflow-hidden">
+        {/* Background gradient effect */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/10 rounded-full blur-3xl opacity-30 pointer-events-none" />
+        
+        <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
               ERP completo para seu negócio
@@ -73,8 +77,13 @@ const Index = () => {
       <PricingSection onOpenChat={openChat} />
 
       {/* CTA Section */}
-      <section className="py-16 bg-muted/30">
-        <div className="container mx-auto px-4 text-center">
+      <section className="py-16 relative overflow-hidden">
+        {/* Gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10" />
+        <div className="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 bg-primary/20 rounded-full blur-3xl opacity-30 pointer-events-none" />
+        <div className="absolute top-1/2 right-0 -translate-y-1/2 w-96 h-96 bg-primary/20 rounded-full blur-3xl opacity-30 pointer-events-none" />
+        
+        <div className="container mx-auto px-4 text-center relative z-10">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
             Pronto para transformar seu negócio?
           </h2>
@@ -83,7 +92,7 @@ const Index = () => {
           </p>
           <button
             onClick={openChat}
-            className="text-primary hover:text-primary/80 font-medium underline underline-offset-4 transition-colors"
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium hover:bg-primary/90 transition-all duration-300 hover:shadow-lg hover:shadow-primary/30"
           >
             Iniciar conversa agora
           </button>

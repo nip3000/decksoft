@@ -50,8 +50,11 @@ const plans = [
 
 const PricingSection = ({ onOpenChat }: PricingSectionProps) => {
   return (
-    <section id="pricing" className="py-16">
-      <div className="container mx-auto px-4">
+    <section id="pricing" className="py-16 relative overflow-hidden">
+      {/* Background effects */}
+      <div className="absolute inset-0 bg-gradient-to-t from-muted/30 via-transparent to-muted/30" />
+      
+      <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             Planos que cabem no seu negócio
@@ -65,42 +68,58 @@ const PricingSection = ({ onOpenChat }: PricingSectionProps) => {
           {plans.map((plan) => (
             <div
               key={plan.name}
-              className={`bg-card border rounded-xl p-6 transition-all duration-300 hover:shadow-lg ${
+              className={`group relative bg-card border rounded-xl p-6 transition-all duration-300 overflow-hidden ${
                 plan.highlighted
-                  ? "border-primary ring-2 ring-primary/20 scale-105"
-                  : "border-border"
+                  ? "border-primary shadow-xl shadow-primary/20 md:scale-105 z-10"
+                  : "border-border hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
               }`}
             >
+              {/* Gradient overlay for highlighted */}
               {plan.highlighted && (
-                <div className="bg-primary text-primary-foreground text-xs font-medium px-3 py-1 rounded-full w-fit mb-4">
-                  Mais popular
-                </div>
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary/5" />
               )}
-              <h3 className="text-xl font-bold text-card-foreground mb-1">
-                {plan.name}
-              </h3>
-              <p className="text-muted-foreground text-sm mb-6">
-                {plan.description}
-              </p>
+              
+              {/* Hover gradient for non-highlighted */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-              <ul className="space-y-3 mb-6">
-                {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-2">
-                    <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-muted-foreground text-sm">
-                      {feature}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              <div className="relative z-10">
+                {plan.highlighted && (
+                  <div className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground text-xs font-medium px-3 py-1 rounded-full w-fit mb-4 shadow-lg shadow-primary/30">
+                    Mais popular
+                  </div>
+                )}
+                <h3 className="text-xl font-bold text-card-foreground mb-1">
+                  {plan.name}
+                </h3>
+                <p className="text-muted-foreground text-sm mb-6">
+                  {plan.description}
+                </p>
 
-              <Button
-                onClick={onOpenChat}
-                className="w-full"
-                variant={plan.highlighted ? "default" : "outline"}
-              >
-                Entrar em contato
-              </Button>
+                <ul className="space-y-3 mb-6">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-2">
+                      <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                        <Check className="w-3 h-3 text-primary" />
+                      </div>
+                      <span className="text-muted-foreground text-sm">
+                        {feature}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                <Button
+                  onClick={onOpenChat}
+                  className={`w-full transition-all duration-300 ${
+                    plan.highlighted 
+                      ? "shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40" 
+                      : "hover:shadow-md"
+                  }`}
+                  variant={plan.highlighted ? "default" : "outline"}
+                >
+                  Entrar em contato
+                </Button>
+              </div>
             </div>
           ))}
         </div>
