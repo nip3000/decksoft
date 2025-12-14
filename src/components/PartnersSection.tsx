@@ -30,11 +30,11 @@ const partnersRow1 = [logo1, logo2, logo3, logo4, logo5, logo6, logo7, logo8, lo
 const partnersRow2 = [logo13, logo14, logo15, logo16, logo17, logo18, logo19, logo20, logo21, logo22, logo23, logo24];
 
 const PartnerLogo = ({ logo }: { logo: string }) => (
-  <div className="flex-shrink-0 w-[140px] h-[80px] bg-card border border-border rounded-xl p-3 transition-all duration-300 hover:shadow-lg hover:border-primary/30 hover:scale-105 group flex items-center justify-center">
+  <div className="flex-shrink-0 w-[180px] h-[100px] bg-card border border-border rounded-xl p-4 transition-all duration-300 hover:shadow-lg hover:border-primary/30 hover:scale-105 group flex items-center justify-center">
     <img 
       src={logo} 
       alt="Partner logo"
-      className="max-w-full max-h-full object-contain opacity-70 group-hover:opacity-100 transition-opacity duration-300"
+      className="w-full h-full object-contain opacity-80 group-hover:opacity-100 transition-opacity duration-300"
     />
   </div>
 );
