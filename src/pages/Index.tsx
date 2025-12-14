@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import ModuleCard from "@/components/ModuleCard";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import PricingSection from "@/components/PricingSection";
+import Footer from "@/components/Footer";
 import FullScreenChat from "@/components/FullScreenChat";
 
 // Configure your n8n webhook URL here
@@ -88,6 +89,9 @@ const Index = () => {
           </button>
         </div>
       </section>
+
+      {/* Footer */}
+      <Footer />
 
       {/* Full Screen Chat */}
       <FullScreenChat
