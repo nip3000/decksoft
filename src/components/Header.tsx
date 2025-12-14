@@ -9,11 +9,17 @@ interface HeaderProps {
 const Header = ({ onOpenChat }: HeaderProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const scrollToFeatures = () => {
-    const element = document.getElementById("features");
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
     element?.scrollIntoView({ behavior: "smooth" });
     setMobileMenuOpen(false);
   };
+
+  const navLinks = [
+    { label: "Funcionalidades", id: "features" },
+    { label: "Depoimentos", id: "testimonials" },
+    { label: "Planos", id: "pricing" },
+  ];
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-md border-b border-border">
@@ -22,12 +28,15 @@ const Header = ({ onOpenChat }: HeaderProps) => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          <button
-            onClick={scrollToFeatures}
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Funcionalidades
-          </button>
+          {navLinks.map((link) => (
+            <button
+              key={link.id}
+              onClick={() => scrollToSection(link.id)}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {link.label}
+            </button>
+          ))}
           <Button onClick={onOpenChat}>Converse conosco</Button>
         </nav>
 
@@ -43,12 +52,15 @@ const Header = ({ onOpenChat }: HeaderProps) => {
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
         <nav className="md:hidden bg-background border-b border-border p-4 flex flex-col gap-4">
-          <button
-            onClick={scrollToFeatures}
-            className="text-muted-foreground hover:text-foreground transition-colors text-left"
-          >
-            Funcionalidades
-          </button>
+          {navLinks.map((link) => (
+            <button
+              key={link.id}
+              onClick={() => scrollToSection(link.id)}
+              className="text-muted-foreground hover:text-foreground transition-colors text-left"
+            >
+              {link.label}
+            </button>
+          ))}
           <Button onClick={() => { onOpenChat(); setMobileMenuOpen(false); }}>
             Converse conosco
           </Button>
