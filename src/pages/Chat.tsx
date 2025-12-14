@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import { ArrowLeft, Send, Loader2, ArrowUp } from "lucide-react";
+import { ArrowLeft, Send, Loader2, ArrowUp, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import chatAvatar from "@/assets/chat-avatar.jpg";
@@ -11,6 +11,12 @@ interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
+}
+
+interface LeadInfo {
+  name: string;
+  email: string;
+  phone: string;
 }
 
 const WEBHOOK_URL = "https://repetiva-n8n.hfnc82.easypanel.host/webhook-test/240b36f9-9d6d-4946-864b-8b681f3ec906";
@@ -26,20 +32,47 @@ const Chat = () => {
   const [searchParams] = useSearchParams();
   const initialMessage = searchParams.get("message") || "";
   
+  const [leadInfo, setLeadInfo] = useState<LeadInfo>({ name: "", email: "", phone: "" });
+  const [hasStartedChat, setHasStartedChat] = useState(false);
+  const [isSubmittingLead, setIsSubmittingLead] = useState(false);
+  
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [greetingIndex, setGreetingIndex] = useState(0);
-  const [isTyping, setIsTyping] = useState(true);
+  const [isTyping, setIsTyping] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const hasInitialized = useRef(false);
 
-  // Show greeting messages sequentially
+  const startChat = async () => {
+    if (!leadInfo.name.trim() || !leadInfo.email.trim() || !leadInfo.phone.trim()) return;
+    
+    setIsSubmittingLead(true);
+    
+    try {
+      // Send lead info to webhook
+      await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          type: "lead_registration",
+          lead: leadInfo,
+          timestamp: new Date().toISOString()
+        }),
+      });
+    } catch (error) {
+      console.error("Error sending lead info:", error);
+    }
+    
+    setIsSubmittingLead(false);
+    setHasStartedChat(true);
+  };
+
+  // Show greeting messages sequentially after chat starts
   useEffect(() => {
-    if (hasInitialized.current) return;
+    if (!hasStartedChat || hasInitialized.current) return;
     hasInitialized.current = true;
 
     const showGreetings = async () => {
@@ -69,7 +102,7 @@ const Chat = () => {
     };
 
     showGreetings();
-  }, []);
+  }, [hasStartedChat]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -77,7 +110,6 @@ const Chat = () => {
     }
   }, [messages, isTyping]);
 
-  // Handle scroll to show/hide scroll to top button
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
     setShowScrollTop(target.scrollTop > 200);
@@ -104,7 +136,6 @@ const Chat = () => {
 
     try {
       if (!WEBHOOK_URL) {
-        // Simulated response when no webhook is configured
         await new Promise(resolve => setTimeout(resolve, 1500));
         const assistantMessage: Message = {
           id: crypto.randomUUID(),
@@ -116,7 +147,11 @@ const Chat = () => {
         const response = await fetch(WEBHOOK_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: userMessage.content, history: messages }),
+          body: JSON.stringify({ 
+            message: userMessage.content, 
+            history: messages,
+            lead: leadInfo
+          }),
         });
 
         if (!response.ok) throw new Error("Erro na comunicação");
@@ -150,6 +185,109 @@ const Chat = () => {
       sendMessage();
     }
   };
+
+  const handleLeadKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && leadInfo.name.trim() && leadInfo.email.trim() && leadInfo.phone.trim()) {
+      e.preventDefault();
+      startChat();
+    }
+  };
+
+  // Lead form view
+  if (!hasStartedChat) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        {/* Header */}
+        <div className="h-16 border-b border-border flex items-center justify-between px-4 shrink-0 bg-card">
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <img 
+              src={chatAvatar} 
+              alt="Atendente DeckSoft" 
+              className="w-10 h-10 rounded-full object-cover border-2 border-primary/20" 
+            />
+            <div>
+              <h2 className="font-semibold text-foreground">Ana • Atendente</h2>
+              <div className="flex items-center gap-1">
+                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <span className="text-xs text-muted-foreground">Online</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Lead Form */}
+        <div className="flex-1 flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-card rounded-2xl p-6 shadow-lg border border-border">
+            <div className="text-center mb-6">
+              <img 
+                src={chatAvatar} 
+                alt="Ana" 
+                className="w-20 h-20 rounded-full object-cover border-4 border-primary/20 mx-auto mb-4" 
+              />
+              <h1 className="text-xl font-bold text-foreground">Olá! Sou a Ana</h1>
+              <p className="text-muted-foreground mt-2">
+                Para iniciar nossa conversa, por favor me conte um pouco sobre você.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Nome</Label>
+                <Input
+                  id="name"
+                  placeholder="Seu nome completo"
+                  value={leadInfo.name}
+                  onChange={(e) => setLeadInfo(prev => ({ ...prev, name: e.target.value }))}
+                  onKeyDown={handleLeadKeyDown}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="email">E-mail</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={leadInfo.email}
+                  onChange={(e) => setLeadInfo(prev => ({ ...prev, email: e.target.value }))}
+                  onKeyDown={handleLeadKeyDown}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="phone">Telefone</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="(00) 00000-0000"
+                  value={leadInfo.phone}
+                  onChange={(e) => setLeadInfo(prev => ({ ...prev, phone: e.target.value }))}
+                  onKeyDown={handleLeadKeyDown}
+                />
+              </div>
+
+              <Button 
+                onClick={startChat} 
+                disabled={!leadInfo.name.trim() || !leadInfo.email.trim() || !leadInfo.phone.trim() || isSubmittingLead}
+                className="w-full mt-2"
+                size="lg"
+              >
+                {isSubmittingLead ? (
+                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                ) : (
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                )}
+                Conversar com a Ana
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -227,7 +365,6 @@ const Chat = () => {
           </div>
         </div>
 
-        {/* Scroll to top button */}
         {showScrollTop && (
           <Button
             variant="secondary"
