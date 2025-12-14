@@ -14,7 +14,8 @@ const ModuleCard = ({ icon, title, shortDescription, fullDescription }: ModuleCa
 
   return (
     <div
-      onClick={() => setIsExpanded(!isExpanded)}
+      onMouseEnter={() => setIsExpanded(true)}
+      onMouseLeave={() => setIsExpanded(false)}
       className={cn(
         "bg-card border border-border rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:border-primary/50",
         isExpanded && "ring-2 ring-primary/20"
