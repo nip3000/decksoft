@@ -101,7 +101,7 @@ const StatsSection = () => {
           {stats.map((stat, index) => (
             <div 
               key={index}
-              className="bg-gradient-to-br from-card via-card to-primary/5 border border-border rounded-xl p-6 text-center transition-all duration-300 hover:shadow-lg hover:border-primary/30 hover:shadow-primary/10 hover:from-card hover:via-primary/5 hover:to-primary/10"
+              className={`bg-gradient-to-br from-card via-card to-primary/5 border border-border rounded-xl p-6 text-center transition-all duration-300 hover:shadow-lg hover:border-primary/30 hover:shadow-primary/10 hover:from-card hover:via-primary/5 hover:to-primary/10 animate-on-scroll stagger-${index + 1}`}
             >
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-4">
                 <stat.icon className="w-6 h-6 text-primary" />
