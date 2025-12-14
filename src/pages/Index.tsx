@@ -5,6 +5,7 @@ import ModuleCard from "@/components/ModuleCard";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import PricingSection from "@/components/PricingSection";
 import FAQSection from "@/components/FAQSection";
+import PartnersSection from "@/components/PartnersSection";
 import Footer from "@/components/Footer";
 import FullScreenChat from "@/components/FullScreenChat";
 import AnimatedSection from "@/components/AnimatedSection";
@@ -156,6 +157,9 @@ const Index = () => {
           </section>
         </div>
       </main>
+
+      {/* Partners Section */}
+      <PartnersSection />
 
       {/* Testimonials Section */}
       <TestimonialsSection />
