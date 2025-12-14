@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ArrowLeft, Send, Loader2, ArrowUp, MessageCircle } from "lucide-react";
+import { ArrowLeft, Send, Loader2, ArrowUp, MessageCircle, Check, CheckCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +12,7 @@ interface Message {
   role: "user" | "assistant";
   content: string;
   timestamp: string; // ISO string in Brasilia timezone (not displayed)
+  status?: "sent" | "read"; // For user messages only
 }
 
 interface LeadInfo {
@@ -188,11 +189,19 @@ const Chat = () => {
       role: "user",
       content: content.trim(),
       timestamp: getBrasiliaTimestamp(),
+      status: "sent",
     };
 
     setMessages(prev => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
+
+    // Mark message as read after a brief delay (simulating server acknowledgment)
+    setTimeout(() => {
+      setMessages(prev => prev.map(msg => 
+        msg.id === userMessage.id ? { ...msg, status: "read" } : msg
+      ));
+    }, 800);
 
     try {
       if (!WEBHOOK_URL) {
@@ -429,15 +438,26 @@ const Chat = () => {
                     className="w-8 h-8 rounded-full object-cover flex-shrink-0 mr-2 mt-1" 
                   />
                 )}
-                <div
-                  className={cn(
-                    "max-w-[80%] rounded-2xl px-4 py-3",
-                    message.role === "user"
-                      ? "bg-primary text-primary-foreground rounded-br-sm"
-                      : "bg-muted text-foreground rounded-tl-sm"
+                <div className="flex flex-col items-end">
+                  <div
+                    className={cn(
+                      "max-w-[80%] rounded-2xl px-4 py-3",
+                      message.role === "user"
+                        ? "bg-primary text-primary-foreground rounded-br-sm"
+                        : "bg-muted text-foreground rounded-tl-sm"
+                    )}
+                  >
+                    <p className="whitespace-pre-wrap">{message.content}</p>
+                  </div>
+                  {message.role === "user" && (
+                    <div className="flex items-center gap-1 mt-1 mr-1">
+                      {message.status === "read" ? (
+                        <CheckCheck className="w-4 h-4 text-primary" />
+                      ) : (
+                        <Check className="w-4 h-4 text-muted-foreground" />
+                      )}
+                    </div>
                   )}
-                >
-                  <p className="whitespace-pre-wrap">{message.content}</p>
                 </div>
               </div>
             ))}
