@@ -161,11 +161,11 @@ const Index = () => {
       {/* Partners Section */}
       <PartnersSection />
 
-      {/* Testimonials Section */}
-      <TestimonialsSection />
-
       {/* Pricing Section */}
       <PricingSection onOpenChat={openChat} />
+
+      {/* Testimonials Section */}
+      <TestimonialsSection />
 
       {/* CTA Section */}
       <section className="py-16 relative overflow-hidden">
