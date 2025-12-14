@@ -9,29 +9,52 @@ import Footer from "@/components/Footer";
 import FullScreenChat from "@/components/FullScreenChat";
 import AnimatedSection from "@/components/AnimatedSection";
 
+// Hero background images
+import heroBgDefault from "@/assets/hero-bg-default.jpg";
+import heroBgConstruction from "@/assets/hero-bg-construction.jpg";
+import heroBgAgro from "@/assets/hero-bg-agro.jpg";
+import heroBgFuel from "@/assets/hero-bg-fuel.jpg";
+
 // Configure your n8n webhook URL here
 const N8N_WEBHOOK_URL = "https://your-n8n-instance.com/webhook/decksoft-chat";
 
-const modules = [{
-  icon: <Building2 className="w-6 h-6" />,
-  title: "Materiais de Construção",
-  shortDescription: "Gestão completa para lojas de materiais",
-  fullDescription: "Sistema completo para gestão de lojas de materiais de construção. Controle de estoque com múltiplos depósitos, gestão de vendas no balcão e por orçamento, emissão de notas fiscais, controle financeiro integrado, gestão de entregas e muito mais. Ideal para depósitos, home centers e lojas especializadas."
-}, {
-  icon: <Wheat className="w-6 h-6" />,
-  title: "Agronegócios",
-  shortDescription: "Soluções para o setor agro",
-  fullDescription: "Solução especializada para o agronegócio. Gestão de vendas de insumos agrícolas, controle de safras, integração com cooperativas, gestão de crédito rural, controle de estoque por lote e validade, rastreabilidade completa e integração com sistemas de precisão. Atende revendas, cooperativas e distribuidoras."
-}, {
-  icon: <Fuel className="w-6 h-6" />,
-  title: "Combustíveis",
-  shortDescription: "Controle de postos e distribuidoras",
-  fullDescription: "Sistema especializado para postos de combustíveis e distribuidoras. Integração com bombas e tanques, controle de LMC, gestão de frentistas, controle de abastecimentos, programa de fidelidade, gestão de convênios com frotas, controle fiscal completo e integração com sistemas de pagamento."
-}];
+type ModuleKey = "construction" | "agro" | "fuel" | null;
+
+const heroBackgrounds: Record<ModuleKey | "default", string> = {
+  default: heroBgDefault,
+  construction: heroBgConstruction,
+  agro: heroBgAgro,
+  fuel: heroBgFuel,
+};
+
+const modules = [
+  {
+    key: "construction" as ModuleKey,
+    icon: <Building2 className="w-6 h-6" />,
+    title: "Materiais de Construção",
+    shortDescription: "Gestão completa para lojas de materiais",
+    fullDescription: "Sistema completo para gestão de lojas de materiais de construção. Controle de estoque com múltiplos depósitos, gestão de vendas no balcão e por orçamento, emissão de notas fiscais, controle financeiro integrado, gestão de entregas e muito mais. Ideal para depósitos, home centers e lojas especializadas."
+  },
+  {
+    key: "agro" as ModuleKey,
+    icon: <Wheat className="w-6 h-6" />,
+    title: "Agronegócios",
+    shortDescription: "Soluções para o setor agro",
+    fullDescription: "Solução especializada para o agronegócio. Gestão de vendas de insumos agrícolas, controle de safras, integração com cooperativas, gestão de crédito rural, controle de estoque por lote e validade, rastreabilidade completa e integração com sistemas de precisão. Atende revendas, cooperativas e distribuidoras."
+  },
+  {
+    key: "fuel" as ModuleKey,
+    icon: <Fuel className="w-6 h-6" />,
+    title: "Combustíveis",
+    shortDescription: "Controle de postos e distribuidoras",
+    fullDescription: "Sistema especializado para postos de combustíveis e distribuidoras. Integração com bombas e tanques, controle de LMC, gestão de frentistas, controle de abastecimentos, programa de fidelidade, gestão de convênios com frotas, controle fiscal completo e integração com sistemas de pagamento."
+  }
+];
 
 const Index = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [initialChatMessage, setInitialChatMessage] = useState<string | undefined>(undefined);
+  const [hoveredModule, setHoveredModule] = useState<ModuleKey>(null);
 
   const openChat = () => {
     setInitialChatMessage(undefined);
@@ -43,14 +66,28 @@ const Index = () => {
     setIsChatOpen(true);
   };
 
+  const currentBackground = hoveredModule ? heroBackgrounds[hoveredModule] : heroBackgrounds.default;
+
   return (
     <div className="min-h-screen bg-background">
       <Header onOpenChat={openChat} />
 
       {/* Hero Section */}
       <main className="pt-24 pb-16 relative overflow-hidden">
-        {/* Background gradient effect */}
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
+        {/* Dynamic Background Image */}
+        <div 
+          className="absolute inset-0 transition-opacity duration-700 ease-in-out"
+          style={{
+            backgroundImage: `url(${currentBackground})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            opacity: 0.15,
+            filter: 'blur(2px)',
+          }}
+        />
+        
+        {/* Background gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background pointer-events-none" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/10 rounded-full blur-3xl opacity-30 pointer-events-none" />
         
         <div className="container mx-auto px-4 relative z-10">
@@ -65,7 +102,14 @@ const Index = () => {
             <div className="grid md:grid-cols-3 gap-6 items-start">
               {modules.map((module, index) => (
                 <AnimatedSection key={module.title} delay={index * 150} animation="scale">
-                  <ModuleCard {...module} onLearnMore={openChatWithMessage} />
+                  <ModuleCard 
+                    icon={module.icon}
+                    title={module.title}
+                    shortDescription={module.shortDescription}
+                    fullDescription={module.fullDescription}
+                    onLearnMore={openChatWithMessage}
+                    onHover={(isHovering) => setHoveredModule(isHovering ? module.key : null)}
+                  />
                 </AnimatedSection>
               ))}
             </div>
