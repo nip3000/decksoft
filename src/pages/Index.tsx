@@ -70,11 +70,11 @@ const Index = () => {
     setIsChatOpen(true);
   };
 
-  const heroTitles: Record<ModuleKey | "default", string> = {
-    default: "Hub de Soluções DeckSoft",
-    construction: "ERP para Materiais de Construção",
-    agro: "ERP para Agronegócios",
-    fuel: "ERP para Postos de Combustíveis",
+  const heroTitles: Record<ModuleKey | "default", React.ReactNode> = {
+    default: <>Hub de Soluções <span className="text-primary">DeckSoft</span></>,
+    construction: <>ERP para <span className="text-primary">Materiais de Construção</span></>,
+    agro: <>ERP para <span className="text-primary">Agronegócios</span></>,
+    fuel: <>ERP para Postos de <span className="text-primary">Combustíveis</span></>,
   };
 
   const heroSubtitles: Record<ModuleKey | "default", string> = {
