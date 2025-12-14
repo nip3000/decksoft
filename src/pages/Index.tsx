@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import ModuleCard from "@/components/ModuleCard";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import PricingSection from "@/components/PricingSection";
+import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
 import FullScreenChat from "@/components/FullScreenChat";
 import AnimatedSection from "@/components/AnimatedSection";
@@ -102,6 +103,9 @@ const Index = () => {
           </AnimatedSection>
         </div>
       </section>
+
+      {/* FAQ Section */}
+      <FAQSection />
 
       {/* Footer */}
       <Footer />
