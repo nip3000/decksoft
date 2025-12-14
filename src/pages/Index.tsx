@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Building2, Wheat, Fuel } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import ModuleCard from "@/components/ModuleCard";
 import TestimonialsSection from "@/components/TestimonialsSection";
@@ -8,7 +9,6 @@ import FAQSection from "@/components/FAQSection";
 import PartnersSection from "@/components/PartnersSection";
 import StatsSection from "@/components/StatsSection";
 import Footer from "@/components/Footer";
-import FullScreenChat from "@/components/FullScreenChat";
 import FloatingChatWidget from "@/components/FloatingChatWidget";
 import AnimatedSection from "@/components/AnimatedSection";
 
@@ -18,9 +18,6 @@ import heroBgConstruction from "@/assets/hero-bg-construction.jpg";
 import heroBgAgro from "@/assets/hero-bg-agro.jpg";
 import heroBgFuel from "@/assets/hero-bg-fuel.jpg";
 import ctaHandshake from "@/assets/cta-handshake.jpg";
-
-// Configure your n8n webhook URL here
-const N8N_WEBHOOK_URL = "https://your-n8n-instance.com/webhook/decksoft-chat";
 
 type ModuleKey = "construction" | "agro" | "fuel" | null;
 
@@ -56,18 +53,15 @@ const modules = [
 ];
 
 const Index = () => {
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [initialChatMessage, setInitialChatMessage] = useState<string | undefined>(undefined);
+  const navigate = useNavigate();
   const [hoveredModule, setHoveredModule] = useState<ModuleKey>(null);
 
   const openChat = () => {
-    setInitialChatMessage(undefined);
-    setIsChatOpen(true);
+    navigate("/chat");
   };
 
   const openChatWithMessage = (message: string) => {
-    setInitialChatMessage(message);
-    setIsChatOpen(true);
+    navigate(`/chat?message=${encodeURIComponent(message)}`);
   };
 
   const heroTitles: Record<ModuleKey | "default", React.ReactNode> = {
@@ -219,14 +213,6 @@ const Index = () => {
 
       {/* Floating Chat Widget */}
       <FloatingChatWidget onOpenChat={openChat} delayMs={4000} />
-
-      {/* Full Screen Chat */}
-      <FullScreenChat 
-        isOpen={isChatOpen} 
-        onClose={() => setIsChatOpen(false)} 
-        webhookUrl={N8N_WEBHOOK_URL} 
-        initialMessage={initialChatMessage}
-      />
     </div>
   );
 };
