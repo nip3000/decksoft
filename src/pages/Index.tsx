@@ -218,7 +218,7 @@ const Index = () => {
       <Footer />
 
       {/* Floating Chat Widget */}
-      <FloatingChatWidget onOpenChat={openChat} delayMs={3000} />
+      <FloatingChatWidget onOpenChat={openChat} delayMs={4000} />
 
       {/* Full Screen Chat */}
       <FullScreenChat 
