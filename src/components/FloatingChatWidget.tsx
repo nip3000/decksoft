@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MessageCircle, X, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -13,11 +13,25 @@ const chatMessages = [
   "Clique no botão abaixo para iniciarmos nossa conversa! 👇"
 ];
 
+const TypingIndicator = () => (
+  <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-3 max-w-[60px] flex gap-1 items-center">
+    <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:0ms]"></span>
+    <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:150ms]"></span>
+    <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:300ms]"></span>
+  </div>
+);
+
 const FloatingChatWidget = ({ onOpenChat, delayMs = 3000 }: FloatingChatWidgetProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [visibleMessages, setVisibleMessages] = useState<number[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const playNotificationSound = () => {
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -51,29 +65,40 @@ const FloatingChatWidget = ({ onOpenChat, delayMs = 3000 }: FloatingChatWidgetPr
     return () => clearTimeout(timer);
   }, [delayMs, isDismissed]);
 
-  // Sequential message animation
+  // Sequential message animation with typing indicator
   useEffect(() => {
     if (!isAnimating) return;
 
-    // Show first message immediately
-    setVisibleMessages([0]);
-    playNotificationSound();
-
-    // Show second message after 2 seconds
-    const timer1 = setTimeout(() => {
-      setVisibleMessages([0, 1]);
+    const showMessage = (index: number) => {
+      setIsTyping(false);
+      setVisibleMessages(prev => [...prev, index]);
       playNotificationSound();
-    }, 2000);
+      setTimeout(scrollToBottom, 100);
+    };
 
-    // Show third message after 4 seconds
-    const timer2 = setTimeout(() => {
-      setVisibleMessages([0, 1, 2]);
-      playNotificationSound();
-    }, 4000);
+    const showTyping = () => {
+      setIsTyping(true);
+      setTimeout(scrollToBottom, 100);
+    };
+
+    // Show typing then first message
+    showTyping();
+    const timer0 = setTimeout(() => showMessage(0), 1000);
+
+    // Show typing then second message
+    const timer1a = setTimeout(showTyping, 2500);
+    const timer1b = setTimeout(() => showMessage(1), 4000);
+
+    // Show typing then third message
+    const timer2a = setTimeout(showTyping, 5500);
+    const timer2b = setTimeout(() => showMessage(2), 7000);
 
     return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
+      clearTimeout(timer0);
+      clearTimeout(timer1a);
+      clearTimeout(timer1b);
+      clearTimeout(timer2a);
+      clearTimeout(timer2b);
     };
   }, [isAnimating]);
 
@@ -130,7 +155,7 @@ const FloatingChatWidget = ({ onOpenChat, delayMs = 3000 }: FloatingChatWidgetPr
           </div>
 
           {/* Messages area */}
-          <div className="space-y-3 mb-4 max-h-48 overflow-y-auto">
+          <div className="space-y-3 mb-4 max-h-48 overflow-y-auto scroll-smooth">
             {chatMessages.map((message, index) => (
               <div
                 key={index}
@@ -145,6 +170,15 @@ const FloatingChatWidget = ({ onOpenChat, delayMs = 3000 }: FloatingChatWidgetPr
                 </div>
               </div>
             ))}
+            
+            {/* Typing indicator */}
+            {isTyping && (
+              <div className="animate-fade-in">
+                <TypingIndicator />
+              </div>
+            )}
+            
+            <div ref={messagesEndRef} />
           </div>
 
           {/* CTA Button - only show after all messages */}
