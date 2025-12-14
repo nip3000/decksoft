@@ -16,6 +16,7 @@ import heroBgDefault from "@/assets/hero-bg-default.jpg";
 import heroBgConstruction from "@/assets/hero-bg-construction.jpg";
 import heroBgAgro from "@/assets/hero-bg-agro.jpg";
 import heroBgFuel from "@/assets/hero-bg-fuel.jpg";
+import ctaHandshake from "@/assets/cta-handshake.jpg";
 
 // Configure your n8n webhook URL here
 const N8N_WEBHOOK_URL = "https://your-n8n-instance.com/webhook/decksoft-chat";
@@ -179,8 +180,13 @@ const Index = () => {
 
       {/* CTA Section */}
       <section className="py-16 relative overflow-hidden">
-        {/* Gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10" />
+        {/* Background image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-15"
+          style={{ backgroundImage: `url(${ctaHandshake})` }}
+        />
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background" />
         <div className="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 bg-primary/20 rounded-full blur-3xl opacity-30 pointer-events-none" />
         <div className="absolute top-1/2 right-0 -translate-y-1/2 w-96 h-96 bg-primary/20 rounded-full blur-3xl opacity-30 pointer-events-none" />
         
