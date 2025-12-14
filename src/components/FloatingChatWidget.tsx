@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { MessageCircle, X, ArrowRight } from "lucide-react";
+import { X, ArrowRight, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import chatAvatar from "@/assets/chat-avatar.jpg";
 
 interface FloatingChatWidgetProps {
   onOpenChat: () => void;
@@ -14,10 +15,13 @@ const chatMessages = [
 ];
 
 const TypingIndicator = () => (
-  <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-3 max-w-[60px] flex gap-1 items-center">
-    <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:0ms]"></span>
-    <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:150ms]"></span>
-    <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:300ms]"></span>
+  <div className="flex items-end gap-2">
+    <img src={chatAvatar} alt="Atendente" className="w-7 h-7 rounded-full object-cover flex-shrink-0" />
+    <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-3 max-w-[60px] flex gap-1 items-center">
+      <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:0ms]"></span>
+      <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:150ms]"></span>
+      <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:300ms]"></span>
+    </div>
   </div>
 );
 
@@ -134,9 +138,7 @@ const FloatingChatWidget = ({ onOpenChat, delayMs = 3000 }: FloatingChatWidgetPr
           {/* Header */}
           <div className="flex items-center justify-between mb-4 pb-3 border-b border-border">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <MessageCircle className="w-5 h-5 text-primary" />
-              </div>
+              <img src={chatAvatar} alt="Atendente DeckSoft" className="w-10 h-10 rounded-full object-cover border-2 border-primary/20" />
               <div>
                 <span className="text-sm font-semibold text-foreground">DeckSoft</span>
                 <div className="flex items-center gap-1">
@@ -165,8 +167,11 @@ const FloatingChatWidget = ({ onOpenChat, delayMs = 3000 }: FloatingChatWidgetPr
                     : "opacity-0 translate-y-4 h-0 overflow-hidden"
                 }`}
               >
-                <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm text-foreground max-w-[90%]">
-                  {message}
+                <div className="flex items-end gap-2">
+                  <img src={chatAvatar} alt="Atendente" className="w-7 h-7 rounded-full object-cover flex-shrink-0" />
+                  <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm text-foreground max-w-[85%]">
+                    {message}
+                  </div>
                 </div>
               </div>
             ))}
