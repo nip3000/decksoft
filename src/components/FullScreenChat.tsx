@@ -15,12 +15,14 @@ interface FullScreenChatProps {
   isOpen: boolean;
   onClose: () => void;
   webhookUrl: string;
+  initialMessage?: string;
 }
 
-const FullScreenChat = ({ isOpen, onClose, webhookUrl }: FullScreenChatProps) => {
+const FullScreenChat = ({ isOpen, onClose, webhookUrl, initialMessage }: FullScreenChatProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [pendingMessage, setPendingMessage] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -29,6 +31,75 @@ const FullScreenChat = ({ isOpen, onClose, webhookUrl }: FullScreenChatProps) =>
       inputRef.current.focus();
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen && initialMessage && !pendingMessage) {
+      setPendingMessage(initialMessage);
+    }
+  }, [isOpen, initialMessage]);
+
+  useEffect(() => {
+    if (pendingMessage && !isLoading) {
+      setInput(pendingMessage);
+      setPendingMessage(null);
+      // Auto-send after a brief delay
+      setTimeout(() => {
+        const fakeEvent = { preventDefault: () => {} } as React.KeyboardEvent;
+        sendMessageWithContent(pendingMessage);
+      }, 100);
+    }
+  }, [pendingMessage, isLoading]);
+
+  const sendMessageWithContent = async (content: string) => {
+    if (!content.trim() || isLoading) return;
+
+    const userMessage: Message = {
+      id: crypto.randomUUID(),
+      role: "user",
+      content: content.trim(),
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(webhookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: userMessage.content,
+          history: messages,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro na comunicação");
+      }
+
+      const data = await response.json();
+      
+      const assistantMessage: Message = {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content: data.response || data.message || "Desculpe, não consegui processar sua mensagem.",
+      };
+
+      setMessages((prev) => [...prev, assistantMessage]);
+    } catch (error) {
+      console.error("Chat error:", error);
+      const errorMessage: Message = {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content: "Desculpe, ocorreu um erro. Tente novamente mais tarde.",
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (scrollRef.current) {

@@ -10,6 +10,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 
 // Configure your n8n webhook URL here
 const N8N_WEBHOOK_URL = "https://your-n8n-instance.com/webhook/decksoft-chat";
+
 const modules = [{
   icon: <Building2 className="w-6 h-6" />,
   title: "Materiais de Construção",
@@ -26,10 +27,23 @@ const modules = [{
   shortDescription: "Controle de postos e distribuidoras",
   fullDescription: "Sistema especializado para postos de combustíveis e distribuidoras. Integração com bombas e tanques, controle de LMC, gestão de frentistas, controle de abastecimentos, programa de fidelidade, gestão de convênios com frotas, controle fiscal completo e integração com sistemas de pagamento."
 }];
+
 const Index = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const openChat = () => setIsChatOpen(true);
-  return <div className="min-h-screen bg-background">
+  const [initialChatMessage, setInitialChatMessage] = useState<string | undefined>(undefined);
+
+  const openChat = () => {
+    setInitialChatMessage(undefined);
+    setIsChatOpen(true);
+  };
+
+  const openChatWithMessage = (message: string) => {
+    setInitialChatMessage(message);
+    setIsChatOpen(true);
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
       <Header onOpenChat={openChat} />
 
       {/* Hero Section */}
@@ -43,15 +57,16 @@ const Index = () => {
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
               ERP completo para seu negócio
             </h1>
-            
           </AnimatedSection>
 
           {/* Module Cards */}
           <section id="features" className="max-w-5xl mx-auto">
             <div className="grid md:grid-cols-3 gap-6 items-start">
-              {modules.map((module, index) => <AnimatedSection key={module.title} delay={index * 150} animation="scale">
-                  <ModuleCard {...module} />
-                </AnimatedSection>)}
+              {modules.map((module, index) => (
+                <AnimatedSection key={module.title} delay={index * 150} animation="scale">
+                  <ModuleCard {...module} onLearnMore={openChatWithMessage} />
+                </AnimatedSection>
+              ))}
             </div>
           </section>
         </div>
@@ -78,7 +93,10 @@ const Index = () => {
             <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
               Converse com nosso assistente virtual e descubra qual solução é ideal para você.
             </p>
-            <button onClick={openChat} className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium hover:bg-primary/90 transition-all duration-300 hover:shadow-lg hover:shadow-primary/30">
+            <button 
+              onClick={openChat} 
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium hover:bg-primary/90 transition-all duration-300 hover:shadow-lg hover:shadow-primary/30"
+            >
               Iniciar conversa agora
             </button>
           </AnimatedSection>
@@ -89,7 +107,14 @@ const Index = () => {
       <Footer />
 
       {/* Full Screen Chat */}
-      <FullScreenChat isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} webhookUrl={N8N_WEBHOOK_URL} />
-    </div>;
+      <FullScreenChat 
+        isOpen={isChatOpen} 
+        onClose={() => setIsChatOpen(false)} 
+        webhookUrl={N8N_WEBHOOK_URL} 
+        initialMessage={initialChatMessage}
+      />
+    </div>
+  );
 };
+
 export default Index;
