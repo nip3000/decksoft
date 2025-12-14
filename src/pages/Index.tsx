@@ -9,6 +9,7 @@ import PartnersSection from "@/components/PartnersSection";
 import StatsSection from "@/components/StatsSection";
 import Footer from "@/components/Footer";
 import FullScreenChat from "@/components/FullScreenChat";
+import FloatingChatWidget from "@/components/FloatingChatWidget";
 import AnimatedSection from "@/components/AnimatedSection";
 
 // Hero background images
@@ -215,6 +216,9 @@ const Index = () => {
 
       {/* Footer */}
       <Footer />
+
+      {/* Floating Chat Widget */}
+      <FloatingChatWidget onOpenChat={openChat} delayMs={3000} />
 
       {/* Full Screen Chat */}
       <FullScreenChat 
