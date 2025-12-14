@@ -59,12 +59,14 @@ const FloatingChatWidget = ({
   // Sequential message animation with typing indicator
   useEffect(() => {
     if (!isAnimating) return;
+    
     const showMessage = (index: number) => {
       setIsTyping(false);
       setVisibleMessages(prev => [...prev, index]);
       playNotificationSound();
       setTimeout(scrollToBottom, 100);
     };
+    
     const showTyping = () => {
       setIsTyping(true);
       setTimeout(scrollToBottom, 100);
@@ -80,7 +82,12 @@ const FloatingChatWidget = ({
 
     // Show typing then third message
     const timer2a = setTimeout(showTyping, 5500);
-    const timer2b = setTimeout(() => showMessage(2), 7000);
+    const timer2b = setTimeout(() => {
+      showMessage(2);
+      // Ensure typing is hidden after last message
+      setIsTyping(false);
+    }, 7000);
+    
     return () => {
       clearTimeout(timer0);
       clearTimeout(timer1a);
