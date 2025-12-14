@@ -159,13 +159,19 @@ const Index = () => {
       </main>
 
       {/* Partners Section */}
-      <PartnersSection />
+      <AnimatedSection animation="fade-up">
+        <PartnersSection />
+      </AnimatedSection>
 
       {/* Pricing Section */}
-      <PricingSection onOpenChat={openChat} />
+      <AnimatedSection animation="fade-up">
+        <PricingSection onOpenChat={openChat} />
+      </AnimatedSection>
 
       {/* Testimonials Section */}
-      <TestimonialsSection />
+      <AnimatedSection animation="fade-up">
+        <TestimonialsSection />
+      </AnimatedSection>
 
       {/* CTA Section */}
       <section className="py-16 relative overflow-hidden">
@@ -193,7 +199,9 @@ const Index = () => {
       </section>
 
       {/* FAQ Section */}
-      <FAQSection />
+      <AnimatedSection animation="fade-up">
+        <FAQSection />
+      </AnimatedSection>
 
       {/* Footer */}
       <Footer />
