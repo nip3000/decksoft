@@ -1,4 +1,5 @@
 import { Mail, Phone, MapPin, Linkedin, Instagram, Facebook, Youtube } from "lucide-react";
+import Logo from "@/components/Logo";
 
 const Footer = () => {
   const scrollToSection = (id: string) => {
@@ -12,7 +13,9 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="md:col-span-1">
-            <div className="text-2xl font-bold text-primary mb-4">DeckSoft</div>
+            <div className="mb-4">
+              <Logo size="lg" />
+            </div>
             <p className="text-muted-foreground text-sm leading-relaxed mb-4">
               Soluções em ERP para empresas que buscam eficiência e crescimento sustentável.
             </p>

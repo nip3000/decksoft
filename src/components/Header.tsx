@@ -1,6 +1,7 @@
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import Logo from "@/components/Logo";
 
 interface HeaderProps {
   onOpenChat: () => void;
@@ -15,6 +16,10 @@ const Header = ({ onOpenChat }: HeaderProps) => {
     setMobileMenuOpen(false);
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const navLinks = [
     { label: "Funcionalidades", id: "features" },
     { label: "Depoimentos", id: "testimonials" },
@@ -24,7 +29,9 @@ const Header = ({ onOpenChat }: HeaderProps) => {
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="text-2xl font-bold text-primary">DeckSoft</div>
+        <button onClick={scrollToTop} className="hover:opacity-80 transition-opacity">
+          <Logo size="md" />
+        </button>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
