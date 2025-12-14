@@ -435,7 +435,7 @@ const Chat = () => {
                   <img 
                     src={chatAvatar} 
                     alt="Atendente" 
-                    className="w-8 h-8 rounded-full object-cover flex-shrink-0 mr-1.5" 
+                    className="w-8 h-8 rounded-full object-cover flex-shrink-0 mr-0.5" 
                   />
                 )}
                 <div className="flex flex-col items-end">
