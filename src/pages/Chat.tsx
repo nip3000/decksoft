@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ArrowLeft, Send, Loader2 } from "lucide-react";
+import { ArrowLeft, Send, Loader2, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -31,7 +31,9 @@ const Chat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [greetingIndex, setGreetingIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(true);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const hasInitialized = useRef(false);
 
@@ -74,6 +76,18 @@ const Chat = () => {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, isTyping]);
+
+  // Handle scroll to show/hide scroll to top button
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLDivElement;
+    setShowScrollTop(target.scrollTop > 200);
+  };
+
+  const scrollToTop = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   const sendMessageWithContent = async (content: string) => {
     if (!content.trim() || isLoading) return;
@@ -161,52 +175,70 @@ const Chat = () => {
       </div>
 
       {/* Messages Area */}
-      <ScrollArea className="flex-1 p-4" ref={scrollRef}>
-        <div className="max-w-3xl mx-auto space-y-4">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={cn(
-                "flex",
-                message.role === "user" ? "justify-end" : "justify-start"
-              )}
-            >
-              {message.role === "assistant" && (
+      <div className="flex-1 overflow-hidden relative">
+        <div 
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="h-full overflow-y-auto p-4"
+        >
+          <div className="max-w-3xl mx-auto space-y-4">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={cn(
+                  "flex",
+                  message.role === "user" ? "justify-end" : "justify-start"
+                )}
+              >
+                {message.role === "assistant" && (
+                  <img 
+                    src={chatAvatar} 
+                    alt="Atendente" 
+                    className="w-8 h-8 rounded-full object-cover flex-shrink-0 mr-2 mt-1" 
+                  />
+                )}
+                <div
+                  className={cn(
+                    "max-w-[80%] rounded-2xl px-4 py-3",
+                    message.role === "user"
+                      ? "bg-primary text-primary-foreground rounded-br-sm"
+                      : "bg-muted text-foreground rounded-tl-sm"
+                  )}
+                >
+                  <p className="whitespace-pre-wrap">{message.content}</p>
+                </div>
+              </div>
+            ))}
+
+            {(isTyping || isLoading) && (
+              <div className="flex justify-start">
                 <img 
                   src={chatAvatar} 
                   alt="Atendente" 
                   className="w-8 h-8 rounded-full object-cover flex-shrink-0 mr-2 mt-1" 
                 />
-              )}
-              <div
-                className={cn(
-                  "max-w-[80%] rounded-2xl px-4 py-3",
-                  message.role === "user"
-                    ? "bg-primary text-primary-foreground rounded-br-sm"
-                    : "bg-muted text-foreground rounded-tl-sm"
-                )}
-              >
-                <p className="whitespace-pre-wrap">{message.content}</p>
+                <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-1">
+                  <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:0ms]"></span>
+                  <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:150ms]"></span>
+                  <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:300ms]"></span>
+                </div>
               </div>
-            </div>
-          ))}
-
-          {(isTyping || isLoading) && (
-            <div className="flex justify-start">
-              <img 
-                src={chatAvatar} 
-                alt="Atendente" 
-                className="w-8 h-8 rounded-full object-cover flex-shrink-0 mr-2 mt-1" 
-              />
-              <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-1">
-                <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:0ms]"></span>
-                <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:150ms]"></span>
-                <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:300ms]"></span>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </ScrollArea>
+
+        {/* Scroll to top button */}
+        {showScrollTop && (
+          <Button
+            variant="secondary"
+            size="icon"
+            onClick={scrollToTop}
+            className="absolute bottom-4 right-4 rounded-full shadow-lg animate-fade-in"
+          >
+            <ArrowUp className="w-4 h-4" />
+          </Button>
+        )}
+      </div>
 
       {/* Input Area */}
       <div className="border-t border-border p-4 shrink-0 bg-card">
