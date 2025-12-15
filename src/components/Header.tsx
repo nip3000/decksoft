@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/Logo";
+import { cn } from "@/lib/utils";
 
 interface HeaderProps {
   onOpenChat: () => void;
@@ -59,21 +60,47 @@ const Header = ({ onOpenChat }: HeaderProps) => {
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden p-2"
+          className="md:hidden p-2 relative w-10 h-10 flex items-center justify-center"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label={mobileMenuOpen ? "Fechar menu" : "Abrir menu"}
         >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          <Menu 
+            size={24} 
+            className={cn(
+              "absolute transition-all duration-300 ease-in-out",
+              mobileMenuOpen ? "opacity-0 rotate-90 scale-0" : "opacity-100 rotate-0 scale-100"
+            )}
+          />
+          <X 
+            size={24} 
+            className={cn(
+              "absolute transition-all duration-300 ease-in-out",
+              mobileMenuOpen ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-0"
+            )}
+          />
         </button>
       </div>
 
       {/* Mobile Navigation */}
-      {mobileMenuOpen && (
-        <nav className="md:hidden bg-background border-b border-border p-4 flex flex-col gap-4">
-          {navLinks.map((link) => (
+      <nav 
+        className={cn(
+          "md:hidden bg-background border-b border-border overflow-hidden transition-all duration-300 ease-in-out",
+          mobileMenuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0 border-b-0"
+        )}
+      >
+        <div className={cn(
+          "p-4 flex flex-col gap-4 transition-all duration-300 ease-in-out",
+          mobileMenuOpen ? "translate-y-0" : "-translate-y-4"
+        )}>
+          {navLinks.map((link, index) => (
             <button
               key={link.id}
               onClick={() => scrollToSection(link.id)}
-              className="text-muted-foreground hover:text-foreground transition-colors text-left"
+              className={cn(
+                "text-muted-foreground hover:text-foreground transition-all text-left",
+                mobileMenuOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
+              )}
+              style={{ transitionDelay: mobileMenuOpen ? `${index * 50}ms` : "0ms" }}
             >
               {link.label}
             </button>
@@ -81,16 +108,27 @@ const Header = ({ onOpenChat }: HeaderProps) => {
           <Button 
             variant="outline"
             onClick={() => { navigate("/login"); setMobileMenuOpen(false); }}
-            className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+            className={cn(
+              "border-green-600 text-green-600 hover:bg-green-600 hover:text-white transition-all",
+              mobileMenuOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
+            )}
+            style={{ transitionDelay: mobileMenuOpen ? `${navLinks.length * 50}ms` : "0ms" }}
           >
             <LogIn className="w-4 h-4 mr-2" />
             Entrar
           </Button>
-          <Button onClick={() => { onOpenChat(); setMobileMenuOpen(false); }}>
+          <Button 
+            onClick={() => { onOpenChat(); setMobileMenuOpen(false); }}
+            className={cn(
+              "transition-all",
+              mobileMenuOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
+            )}
+            style={{ transitionDelay: mobileMenuOpen ? `${(navLinks.length + 1) * 50}ms` : "0ms" }}
+          >
             Converse conosco
           </Button>
-        </nav>
-      )}
+        </div>
+      </nav>
     </header>
   );
 };
