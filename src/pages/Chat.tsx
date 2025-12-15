@@ -174,10 +174,11 @@ const Chat = () => {
       }
       setIsTyping(false);
       
-      // If there's an initial message from URL, send it after greetings
-      if (initialMessage) {
+      // If there's an initial message from lead form or URL, send it after greetings
+      const messageToSend = leadInfo.message.trim() || initialMessage;
+      if (messageToSend) {
         await new Promise(resolve => setTimeout(resolve, 500));
-        sendMessageWithContent(initialMessage);
+        sendMessageWithContent(messageToSend);
       }
     };
 
