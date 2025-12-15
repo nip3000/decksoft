@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 
 interface AudioPlayerProps {
   audioData: string;
+  initialDuration?: number;
   className?: string;
 }
 
@@ -46,10 +47,10 @@ const WaveformBars = ({ isPlaying, progress }: { isPlaying: boolean; progress: n
   );
 };
 
-const AudioPlayer = ({ audioData, className }: AudioPlayerProps) => {
+const AudioPlayer = ({ audioData, initialDuration, className }: AudioPlayerProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
+  const [duration, setDuration] = useState(initialDuration || 0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [, forceUpdate] = useState(0);
 
