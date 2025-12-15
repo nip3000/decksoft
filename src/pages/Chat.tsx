@@ -352,11 +352,15 @@ const Chat = () => {
     hasInitialized.current = true;
 
     const sendInitialMessage = async () => {
-      // Build the message to send - always include lead intro (name/company/phone/email)
-      const companyText = leadInfo.company.trim() ? `, da empresa ${leadInfo.company.trim()}` : "";
-      const phoneText = leadInfo.phone.trim() ? `, meu telefone é ${leadInfo.phone.trim()}` : "";
-      const emailText = leadInfo.email.trim() ? `, meu e-mail é ${leadInfo.email.trim()}` : "";
-      const intro = `Oi Ana, tudo bem? Sou o ${leadInfo.name}${companyText}${phoneText}${emailText}`;
+      // Build natural intro with lead info
+      const namePart = leadInfo.name.trim();
+      const companyPart = leadInfo.company.trim() ? ` da ${leadInfo.company.trim()}` : "";
+      
+      // Combine contact info naturally
+      const contacts = [leadInfo.phone.trim(), leadInfo.email.trim()].filter(Boolean);
+      const contactPart = contacts.length > 0 ? ` (${contacts.join(" | ")})` : "";
+      
+      const intro = `Oi Ana, tudo bem? Sou o ${namePart}${companyPart}${contactPart}`;
       
       // If user wrote a custom message, prepend the intro
       const customMessage = leadInfo.message.trim() || initialMessage;
