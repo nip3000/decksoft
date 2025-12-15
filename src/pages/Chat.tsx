@@ -22,7 +22,7 @@ interface LeadInfo {
   phone: string;
 }
 
-const WEBHOOK_URL = "https://repetiva-n8n.hfnc82.easypanel.host/webhook-test/240b36f9-9d6d-4946-864b-8b681f3ec906";
+const WEBHOOK_URL = "https://repetiva-n8n.hfnc82.easypanel.host/webhook/240b36f9-9d6d-4946-864b-8b681f3ec906";
 
 const greetingMessages = [
   "Olá! 👋 Seja bem-vindo(a) à DeckSoft!",
