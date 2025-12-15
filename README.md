@@ -115,7 +115,105 @@ Oi Ana, tudo bem? Sou o [NOME] da [EMPRESA] ([TELEFONE] | [EMAIL]), gostaria de 
 
 ---
 
-## 🛠 Tecnologias
+## 📊 Diagrama do Fluxo de Conversa
+
+```mermaid
+flowchart TD
+    subgraph LANDING["🏠 Landing Page"]
+        A[Usuário acessa site] --> B{Interação}
+        B -->|Widget aparece 4s| C[Widget Flutuante]
+        B -->|Clica botão header| D["/chat"]
+        B -->|Clica plano| D
+        C -->|Clica CTA| D
+    end
+
+    subgraph FORM["📝 Formulário de Lead"]
+        D --> E[Exibe formulário]
+        E --> F[Preenche dados]
+        F --> G{Validação}
+        G -->|Inválido| F
+        G -->|Válido| H[Envia lead_registration]
+        H --> I[Webhook n8n]
+        I --> J[Salva CRM]
+    end
+
+    subgraph CHAT["💬 Conversa"]
+        J --> K[Monta mensagem inicial]
+        K --> L["Oi Ana, sou o [NOME] da [EMPRESA]<br/>([TELEFONE] | [EMAIL]). [MENSAGEM]"]
+        L --> M[Envia messageType: text]
+        M --> N[Webhook n8n]
+        N --> O[Processa IA]
+        O --> P[Resposta Ana]
+        P --> Q{Próxima ação}
+        
+        Q -->|Nova mensagem texto| R[Digita mensagem]
+        R --> M
+        
+        Q -->|Mensagem de voz| S[Grava áudio]
+        S --> T[Envia messageType: audio]
+        T --> U[Webhook n8n]
+        U --> V[Transcrição Whisper]
+        V --> O
+        
+        Q -->|Finalizar| W[Clica Finalizar]
+    end
+
+    subgraph END["⭐ Finalização"]
+        W --> X[Dialog de avaliação]
+        X --> Y[Seleciona 1-5 estrelas]
+        Y --> Z[Comentário opcional]
+        Z --> AA[Confirma]
+        AA --> AB[Redireciona para /]
+    end
+
+    style LANDING fill:#1a1a2e,stroke:#dc2626,color:#fff
+    style FORM fill:#16213e,stroke:#dc2626,color:#fff
+    style CHAT fill:#0f3460,stroke:#dc2626,color:#fff
+    style END fill:#1a1a2e,stroke:#dc2626,color:#fff
+```
+
+### Fluxo Simplificado de Mensagens
+
+```mermaid
+sequenceDiagram
+    participant U as 👤 Usuário
+    participant F as 🖥️ Frontend
+    participant W as 🔗 Webhook n8n
+    participant IA as 🤖 IA (OpenAI/Claude)
+
+    Note over U,IA: Registro de Lead
+    U->>F: Preenche formulário
+    F->>W: POST lead_registration
+    W-->>F: 200 OK
+
+    Note over U,IA: Mensagem Inicial
+    F->>F: Monta apresentação do lead
+    F->>W: POST messageType: text
+    W->>IA: Envia para processamento
+    IA-->>W: Resposta gerada
+    W-->>F: { text: "..." }
+    F->>U: Exibe resposta Ana
+
+    Note over U,IA: Loop de Conversa
+    U->>F: Envia mensagem/áudio
+    F->>W: POST messageType: text/audio
+    alt Áudio
+        W->>W: Transcreve com Whisper
+    end
+    W->>IA: Processa mensagem
+    IA-->>W: Resposta
+    W-->>F: { text: "..." }
+    F->>U: Exibe resposta Ana
+
+    Note over U,IA: Finalização
+    U->>F: Clica Finalizar
+    F->>U: Dialog de avaliação
+    U->>F: Avalia ⭐⭐⭐⭐⭐
+    F->>U: Redireciona para /
+```
+
+---
+
 
 ### Frontend
 - **React 18** - Biblioteca UI
