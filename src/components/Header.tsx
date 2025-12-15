@@ -71,10 +71,10 @@ const Header = ({ onOpenChat }: HeaderProps) => {
               key={link.id}
               onClick={() => scrollToSection(link.id)}
               className={cn(
-                "relative transition-colors after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-primary after:transition-transform after:duration-300",
+                "relative transition-all duration-300 after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-primary after:transition-all after:duration-300 after:ease-out",
                 activeSection === link.id
-                  ? "text-primary after:scale-x-100"
-                  : "text-muted-foreground hover:text-foreground after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left"
+                  ? "text-primary after:scale-x-100 after:opacity-100"
+                  : "text-muted-foreground hover:text-foreground after:scale-x-0 after:opacity-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:opacity-100 hover:after:origin-bottom-left"
               )}
             >
               {link.label}
