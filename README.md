@@ -43,17 +43,66 @@ O projeto consiste em uma landing page moderna e responsiva com um sistema de ch
 
 ### Sistema de Chat (Ana - Atendente Virtual)
 
-- **Formulário de Lead**: Captura nome, e-mail, telefone e empresa antes do chat
-- **Validação de Dados**: Validação de e-mail e formatação automática de telefone (XX XXXXX-XXXX)
-- **Chat em Tempo Real**: Interface estilo WhatsApp com mensagens do usuário e da Ana
-- **Integração n8n**: Webhook para processamento de mensagens via IA
-- **Timestamps**: Todas as mensagens são registradas com horário de Brasília (UTC-3)
-- **Tratamento de Erros**: Mensagens amigáveis para falhas de conexão
+#### Formulário de Lead
+- Captura nome, e-mail, telefone, empresa e mensagem inicial (opcional)
+- Validação de e-mail e formatação automática de telefone (XX XXXXX-XXXX)
+- Campo de mensagem opcional para o lead descrever sua necessidade
+
+#### Mensagem Inicial Automática
+Ao iniciar o chat, o sistema envia automaticamente uma mensagem de apresentação que inclui:
+- Nome do lead
+- Empresa (se informada)
+- Telefone
+- E-mail
+
+**Formato da mensagem:**
+```
+Oi Ana, tudo bem? Sou o [NOME] da [EMPRESA] ([TELEFONE] | [EMAIL]). [MENSAGEM DO LEAD]
+```
+
+Se o lead não escrever uma mensagem personalizada, o sistema usa:
+```
+Oi Ana, tudo bem? Sou o [NOME] da [EMPRESA] ([TELEFONE] | [EMAIL]), gostaria de mais informações sobre os serviços de vocês.
+```
+
+#### Chat em Tempo Real
+- Interface estilo WhatsApp com mensagens do usuário e da Ana
+- Indicador de digitação ("Ana está digitando...") com avatar animado
+- Status de mensagem (enviado ✓ / lido ✓✓)
+- Scroll automático para última mensagem
+- Envio de múltiplas mensagens sem bloqueio
+- Foco automático no input após resposta
+
+#### Mensagens de Voz
+- Gravação de áudio via botão de microfone
+- Waveform animado durante gravação
+- Player de áudio interativo com:
+  - Botão play/pause
+  - Waveform visual com barras coloridas
+  - Indicador de progresso (parte tocada vs não tocada)
+  - Tempo atual / duração total
+  - Seek por clique nas barras do waveform
+- Duração capturada no momento da gravação (sem delay)
+
+#### Finalização do Chat
+- Botão "Finalizar chat" ao lado do input
+- Dialog de avaliação com:
+  - Rating de 1-5 estrelas (obrigatório)
+  - Campo de comentário opcional
+  - Botão desabilitado até selecionar estrelas
+- Redirecionamento para landing page após finalizar
+
+#### Integração n8n
+- Webhook para processamento de mensagens via IA
+- Suporte a mensagens de texto e áudio
+- Timestamps em horário de Brasília (UTC-3)
+- Dados do lead enviados em todas as mensagens
 
 ### Widget Flutuante
 
 - **Aparece Automaticamente**: Após 4 segundos na landing page
-- **Mensagens Sequenciais**: 3 mensagens de boas-vindas com delays
+- **Mensagens Sequenciais**: 3 mensagens de boas-vindas com delays de 2s
+- **Indicador de Digitação**: Aparece antes de cada mensagem
 - **Expansível/Retrátil**: Pode ser minimizado sem perder o contexto
 - **CTA para Chat**: Direciona para a página de chat completa
 
@@ -102,9 +151,12 @@ src/
 ├── components/               # Componentes React
 │   ├── ui/                   # Componentes Shadcn/ui
 │   ├── AnimatedSection.tsx   # Wrapper para animações de scroll
+│   ├── AudioPlayer.tsx       # Player de áudio com waveform
+│   ├── AudioWaveform.tsx     # Visualização de waveform na gravação
 │   ├── FAQSection.tsx        # Seção de perguntas frequentes
 │   ├── FloatingChatWidget.tsx # Widget de chat flutuante
 │   ├── Footer.tsx            # Rodapé
+│   ├── FullScreenChat.tsx    # Chat em tela cheia (modal)
 │   ├── Header.tsx            # Cabeçalho com navegação
 │   ├── Logo.tsx              # Componente do logo
 │   ├── ModuleCard.tsx        # Cards dos módulos ERP
@@ -114,6 +166,7 @@ src/
 │   └── TestimonialsSection.tsx # Depoimentos
 │
 ├── hooks/                    # Hooks customizados
+│   ├── use-audio-recorder.ts # Hook para gravação de áudio
 │   ├── use-count-up.ts       # Contador animado
 │   ├── use-in-view.ts        # Detecção de viewport
 │   ├── use-mobile.tsx        # Detecção de mobile
@@ -145,7 +198,7 @@ https://repetiva-n8n.hfnc82.easypanel.host/webhook/240b36f9-9d6d-4946-864b-8b681
 
 ### Eventos Enviados
 
-#### 1. Registro de Lead
+#### 1. Registro de Lead (`lead_registration`)
 Enviado quando o usuário preenche o formulário inicial do chat.
 
 ```json
@@ -155,18 +208,20 @@ Enviado quando o usuário preenche o formulário inicial do chat.
     "name": "Nome do Lead",
     "email": "email@exemplo.com",
     "phone": "11 99999-9999",
-    "company": "Empresa (opcional)"
+    "company": "Empresa (opcional)",
+    "message": "Mensagem inicial (opcional)"
   },
   "timestamp": "2024-01-15T10:30:00.000Z"
 }
 ```
 
-#### 2. Mensagem do Usuário
-Enviado a cada mensagem do usuário durante o chat.
+#### 2. Mensagem de Texto
+Enviado a cada mensagem de texto do usuário.
 
 ```json
 {
-  "message": "Texto da mensagem do usuário",
+  "messageType": "text",
+  "message": "Oi Ana, tudo bem? Sou o João da Empresa X (11 99999-9999 | joao@email.com). Preciso de informações sobre o módulo de Construção.",
   "timestamp": "2024-01-15T10:31:00-03:00",
   "history": [
     {
@@ -177,13 +232,28 @@ Enviado a cada mensagem do usuário durante o chat.
     }
   ],
   "lead": {
-    "name": "Nome",
-    "email": "email@exemplo.com",
+    "name": "João",
+    "email": "joao@email.com",
     "phone": "11 99999-9999",
-    "company": "Empresa"
+    "company": "Empresa X"
   }
 }
 ```
+
+#### 3. Mensagem de Áudio
+Enviado quando o usuário grava e envia um áudio. Usa `multipart/form-data`.
+
+```
+FormData:
+- audio: Blob (type: audio/webm)
+- messageType: "audio"
+- format: "webm"
+- timestamp: "2024-01-15T10:31:00-03:00"
+- history: JSON string do array de mensagens
+- lead: JSON string dos dados do lead
+```
+
+No n8n, o áudio é acessível via `$binary.audio` para processamento direto por serviços de transcrição (Whisper, EvolutionAPI, etc).
 
 ### Resposta Esperada do Webhook
 
@@ -202,11 +272,13 @@ Fallbacks: `text` → `response` → `message`
 ```
 Webhook Trigger
     ↓
-Verificar tipo de evento (lead_registration ou mensagem)
+Verificar messageType (text, audio) ou type (lead_registration)
+    ↓
+[Se audio] → Transcrever com Whisper/EvolutionAPI
     ↓
 [Se lead_registration] → Salvar no CRM/Base de dados
     ↓
-[Se mensagem] → Enviar para modelo de IA (OpenAI, Claude, etc.)
+[Se text/audio transcrito] → Enviar para modelo de IA (OpenAI, Claude, etc.)
     ↓
 Formatar resposta
     ↓
@@ -243,13 +315,22 @@ Respond to Webhook (campo "text")
 - Descrição completa sempre visível
 
 ### Chat (Ana)
-- Formulário de lead obrigatório
-- Mensagens de boas-vindas sequenciais
-- Indicador de digitação
-- Status de mensagem (enviado/lido)
+- Formulário de lead obrigatório com campos: nome, e-mail, telefone, empresa, mensagem
+- Mensagem inicial automática com dados do lead
+- Indicador de digitação com delay de 2s após mensagem ser "lida"
+- Status de mensagem (enviado/lido com checkmarks)
 - Scroll automático para última mensagem
-- Input bloqueado durante aguardo de resposta
+- Envio de múltiplas mensagens em paralelo (sem bloqueio)
 - Foco automático após resposta
+- Gravação e reprodução de áudios
+- Botão de finalizar chat com avaliação
+
+### AudioPlayer
+- Player interativo para mensagens de áudio
+- Waveform visual com 30 barras animadas
+- Cores diferentes para parte tocada (primary) vs não tocada (muted)
+- Seek por clique nas barras
+- Duração capturada no momento da gravação
 
 ### PricingSection
 - 3 planos: Essencial, Profissional, Enterprise
@@ -331,6 +412,7 @@ Elementos adaptados:
 - Sombras pronunciadas
 - Hover com elevação
 - Animações suaves (700ms padrão)
+- Waveform animado no chat
 
 ---
 
@@ -354,6 +436,12 @@ npm install
 # Inicie o servidor de desenvolvimento
 npm run dev
 ```
+
+---
+
+## 📄 Documentação Adicional
+
+- [API de Webhook n8n](docs/API-WEBHOOK.md) - Documentação completa da integração
 
 ---
 
