@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ArrowLeft, Send, Loader2, ArrowUp, MessageCircle, Check, CheckCheck, User, Mic, Square } from "lucide-react";
+import { ArrowLeft, Send, Loader2, ArrowUp, MessageCircle, Check, CheckCheck, User, Mic, Square, X, Star } from "lucide-react";
 import { useAudioRecorder, formatDuration } from "@/hooks/use-audio-recorder";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,16 @@ import { cn } from "@/lib/utils";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import chatAvatar from "@/assets/chat-avatar.jpg";
 import AudioWaveform from "@/components/AudioWaveform";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface Message {
   id: string;
@@ -137,6 +147,8 @@ const Chat = () => {
   const isTyping = pendingResponses > 0 && showTypingIndicator;
   const [isUploadingAudio, setIsUploadingAudio] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [showEndChatDialog, setShowEndChatDialog] = useState(false);
+  const [rating, setRating] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const hasInitialized = useRef(false);
@@ -778,8 +790,57 @@ const Chat = () => {
           >
             <Send className="w-4 h-4" />
           </Button>
+          <Button
+            variant="outline"
+            onClick={() => setShowEndChatDialog(true)}
+            className="text-destructive hover:text-destructive hover:bg-destructive/10"
+          >
+            <X className="w-4 h-4 mr-1" />
+            <span className="hidden sm:inline">Finalizar</span>
+          </Button>
         </div>
       </div>
+
+      {/* End Chat Rating Dialog */}
+      <AlertDialog open={showEndChatDialog} onOpenChange={setShowEndChatDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Finalizar conversa</AlertDialogTitle>
+            <AlertDialogDescription>
+              Como você avalia seu atendimento?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="flex justify-center gap-2 py-4">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                type="button"
+                onClick={() => setRating(star)}
+                className="p-1 transition-transform hover:scale-110 focus:outline-none"
+              >
+                <Star
+                  className={cn(
+                    "w-8 h-8 transition-colors",
+                    star <= rating
+                      ? "fill-yellow-400 text-yellow-400"
+                      : "text-muted-foreground hover:text-yellow-400"
+                  )}
+                />
+              </button>
+            ))}
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setRating(0)}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => navigate("/")}
+              disabled={rating === 0}
+              className={cn(rating === 0 && "opacity-50 cursor-not-allowed")}
+            >
+              Finalizar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
