@@ -212,10 +212,179 @@ sequenceDiagram
     F->>U: Redireciona para /
 ```
 
+### Arquitetura Técnica do Sistema
+
+```mermaid
+graph TB
+    subgraph CLIENT["🌐 Cliente (Browser)"]
+        direction TB
+        LP[Landing Page<br/>React + Vite]
+        CHAT[Chat Page<br/>/chat]
+        LOGIN[Login Page<br/>/login]
+        WIDGET[Widget Flutuante]
+        
+        LP --> WIDGET
+        WIDGET -->|Click CTA| CHAT
+        LP -->|Botão Header| CHAT
+        LP -->|Botão Login| LOGIN
+    end
+
+    subgraph FRONTEND["⚛️ Frontend Stack"]
+        direction LR
+        REACT[React 18]
+        TS[TypeScript]
+        TAILWIND[Tailwind CSS]
+        SHADCN[Shadcn/ui]
+        RQ[React Query]
+    end
+
+    subgraph CHAT_FEATURES["💬 Funcionalidades do Chat"]
+        direction TB
+        FORM[Formulário Lead]
+        TEXT_MSG[Mensagens Texto]
+        AUDIO_MSG[Mensagens Áudio]
+        AUDIO_REC[Gravação<br/>MediaRecorder API]
+        AUDIO_PLAY[Player Áudio<br/>Waveform Visual]
+        RATING[Avaliação ⭐]
+        
+        FORM --> TEXT_MSG
+        AUDIO_REC --> AUDIO_MSG
+        AUDIO_MSG --> AUDIO_PLAY
+    end
+
+    subgraph N8N["🔗 n8n Automation"]
+        direction TB
+        WEBHOOK[Webhook Trigger<br/>POST /webhook/...]
+        SWITCH[Switch Node<br/>messageType]
+        
+        subgraph ROUTES["Rotas"]
+            LEAD_ROUTE[lead_registration]
+            TEXT_ROUTE[messageType: text]
+            AUDIO_ROUTE[messageType: audio]
+        end
+        
+        WEBHOOK --> SWITCH
+        SWITCH --> LEAD_ROUTE
+        SWITCH --> TEXT_ROUTE
+        SWITCH --> AUDIO_ROUTE
+    end
+
+    subgraph PROCESSING["🧠 Processamento"]
+        direction TB
+        CRM[(CRM / Airtable<br/>Dados do Lead)]
+        WHISPER[Whisper API<br/>Transcrição]
+        AI[OpenAI / Claude<br/>Geração de Resposta]
+        
+        LEAD_ROUTE --> CRM
+        AUDIO_ROUTE --> WHISPER
+        WHISPER --> AI
+        TEXT_ROUTE --> AI
+    end
+
+    subgraph ANALYTICS["📊 Analytics"]
+        GA[Google Analytics<br/>G-D99XWC36R3]
+    end
+
+    CLIENT -->|HTTP POST| N8N
+    N8N -->|JSON Response| CLIENT
+    CLIENT --> ANALYTICS
+    
+    FRONTEND -.->|Tecnologias| CLIENT
+    CHAT_FEATURES -.->|Componentes| CHAT
+
+    style CLIENT fill:#1a1a2e,stroke:#dc2626,color:#fff
+    style N8N fill:#ff6d00,stroke:#ff6d00,color:#fff
+    style PROCESSING fill:#0f3460,stroke:#dc2626,color:#fff
+    style ANALYTICS fill:#16213e,stroke:#dc2626,color:#fff
+```
+
+### Arquitetura de Componentes React
+
+```mermaid
+graph TD
+    subgraph APP["App.tsx"]
+        ROUTER[React Router]
+    end
+
+    subgraph PAGES["📄 Pages"]
+        INDEX[Index.tsx<br/>Landing Page]
+        CHAT_PAGE[Chat.tsx<br/>Chat Completo]
+        LOGIN_PAGE[Login.tsx]
+        FORGOT[ForgotPassword.tsx]
+    end
+
+    subgraph LANDING_COMPONENTS["🏠 Landing Components"]
+        HEADER[Header]
+        HERO[Hero Section]
+        STATS[StatsSection]
+        PARTNERS[PartnersSection]
+        PRICING[PricingSection]
+        TESTIMONIALS[TestimonialsSection]
+        FAQ[FAQSection]
+        FOOTER[Footer]
+        FLOAT_WIDGET[FloatingChatWidget]
+    end
+
+    subgraph CHAT_COMPONENTS["💬 Chat Components"]
+        AUDIO_PLAYER[AudioPlayer<br/>Waveform + Controls]
+        AUDIO_WAVEFORM[AudioWaveform<br/>Recording Visual]
+        FULLSCREEN[FullScreenChat]
+    end
+
+    subgraph UI["🎨 UI Components (Shadcn)"]
+        BUTTON[Button]
+        INPUT[Input]
+        DIALOG[Dialog]
+        SCROLL[ScrollArea]
+        ACCORDION[Accordion]
+    end
+
+    subgraph HOOKS["🪝 Custom Hooks"]
+        USE_AUDIO[use-audio-recorder]
+        USE_COUNT[use-count-up]
+        USE_VIEW[use-in-view]
+        USE_MOBILE[use-mobile]
+        USE_TOAST[use-toast]
+    end
+
+    ROUTER --> INDEX
+    ROUTER --> CHAT_PAGE
+    ROUTER --> LOGIN_PAGE
+    ROUTER --> FORGOT
+
+    INDEX --> HEADER
+    INDEX --> HERO
+    INDEX --> STATS
+    INDEX --> PARTNERS
+    INDEX --> PRICING
+    INDEX --> TESTIMONIALS
+    INDEX --> FAQ
+    INDEX --> FOOTER
+    INDEX --> FLOAT_WIDGET
+
+    CHAT_PAGE --> AUDIO_PLAYER
+    CHAT_PAGE --> AUDIO_WAVEFORM
+    CHAT_PAGE --> USE_AUDIO
+
+    STATS --> USE_COUNT
+    STATS --> USE_VIEW
+
+    LANDING_COMPONENTS --> UI
+    CHAT_COMPONENTS --> UI
+
+    style APP fill:#61dafb,stroke:#61dafb,color:#000
+    style PAGES fill:#1a1a2e,stroke:#dc2626,color:#fff
+    style LANDING_COMPONENTS fill:#16213e,stroke:#dc2626,color:#fff
+    style CHAT_COMPONENTS fill:#0f3460,stroke:#dc2626,color:#fff
+    style UI fill:#1a1a2e,stroke:#dc2626,color:#fff
+    style HOOKS fill:#16213e,stroke:#dc2626,color:#fff
+```
+
 ---
 
+## 🛠 Tecnologias
 
-### Frontend
+
 - **React 18** - Biblioteca UI
 - **TypeScript** - Tipagem estática
 - **Vite** - Build tool
