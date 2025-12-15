@@ -145,7 +145,7 @@ const Chat = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-          type: "audio_message",
+          messageType: "audio",
           audio: audioBase64,
           format: "webm",
           timestamp: userMessage.timestamp,
@@ -303,6 +303,7 @@ const Chat = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ 
+            messageType: "text",
             message: userMessage.content,
             timestamp: userMessage.timestamp,
             history: messages,
