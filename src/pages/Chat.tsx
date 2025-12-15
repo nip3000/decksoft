@@ -29,6 +29,7 @@ interface Message {
   timestamp: string; // ISO string in Brasilia timezone (not displayed)
   status?: "sent" | "read"; // For user messages only
   audioData?: string; // Base64 audio data for voice messages
+  audioDuration?: number; // Duration in seconds for audio messages
   isAudio?: boolean; // Flag to identify audio messages
 }
 
@@ -201,14 +202,15 @@ const Chat = () => {
 
   const handleSendAudio = async () => {
     if (audioRecorder.state === "recording") {
+      const recordedDuration = audioRecorder.duration;
       const audioBase64 = await audioRecorder.stopRecording();
       if (audioBase64) {
-        sendAudioMessage(audioBase64);
+        sendAudioMessage(audioBase64, recordedDuration);
       }
     }
   };
 
-  const sendAudioMessage = async (audioBase64: string) => {
+  const sendAudioMessage = async (audioBase64: string, recordedDuration: number) => {
     const userMessage: Message = {
       id: crypto.randomUUID(),
       role: "user",
@@ -216,6 +218,7 @@ const Chat = () => {
       timestamp: getBrasiliaTimestamp(),
       status: "sent",
       audioData: audioBase64,
+      audioDuration: recordedDuration,
       isAudio: true,
     };
 
@@ -688,7 +691,7 @@ const Chat = () => {
                     )}
                   >
                     {message.isAudio && message.audioData ? (
-                      <AudioPlayer audioData={message.audioData} />
+                      <AudioPlayer audioData={message.audioData} initialDuration={message.audioDuration} />
                     ) : (
                       <p className="whitespace-pre-wrap">{message.content}</p>
                     )}
