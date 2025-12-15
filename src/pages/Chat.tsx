@@ -174,12 +174,13 @@ const Chat = () => {
       }
       setIsTyping(false);
       
-      // If there's an initial message from lead form or URL, send it after greetings
-      const messageToSend = leadInfo.message.trim() || initialMessage;
-      if (messageToSend) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        sendMessageWithContent(messageToSend);
-      }
+      // Send initial message after greetings
+      // Priority: lead form message > URL message > default message with lead name
+      const defaultMessage = `Oi Ana, tudo bem? Sou o ${leadInfo.name}, gostaria de mais informações sobre os serviços de vocês.`;
+      const messageToSend = leadInfo.message.trim() || initialMessage || defaultMessage;
+      
+      await new Promise(resolve => setTimeout(resolve, 500));
+      sendMessageWithContent(messageToSend);
     };
 
     showGreetings();
