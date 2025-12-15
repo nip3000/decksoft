@@ -604,16 +604,21 @@ const Chat = () => {
             ))}
 
             {isTyping && (
-              <div className="flex justify-start">
+              <div className="flex justify-start animate-fade-in">
                 <img 
                   src={chatAvatar} 
-                  alt="Atendente" 
-                  className="w-8 h-8 rounded-full object-cover flex-shrink-0 mr-2 mt-1" 
+                  alt="Ana" 
+                  className="w-8 h-8 rounded-full object-cover flex-shrink-0 mr-2 mt-1 ring-2 ring-primary/20" 
                 />
-                <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-1">
-                  <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:0ms]"></span>
-                  <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:150ms]"></span>
-                  <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:300ms]"></span>
+                <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground font-medium">Ana está digitando</span>
+                    <div className="flex items-center gap-0.5">
+                      <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0ms]"></span>
+                      <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:150ms]"></span>
+                      <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:300ms]"></span>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
