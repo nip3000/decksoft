@@ -3,6 +3,7 @@ import { ArrowLeft, Send, Loader2, ArrowUp, MessageCircle, Check, CheckCheck } f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import chatAvatar from "@/assets/chat-avatar.jpg";
@@ -20,6 +21,7 @@ interface LeadInfo {
   company: string;
   email: string;
   phone: string;
+  message: string;
 }
 
 const WEBHOOK_URL = "https://repetiva-n8n.hfnc82.easypanel.host/webhook/240b36f9-9d6d-4946-864b-8b681f3ec906";
@@ -87,7 +89,7 @@ const Chat = () => {
   const [searchParams] = useSearchParams();
   const initialMessage = searchParams.get("message") || "";
   
-  const [leadInfo, setLeadInfo] = useState<LeadInfo>({ name: "", company: "", email: "", phone: "" });
+  const [leadInfo, setLeadInfo] = useState<LeadInfo>({ name: "", company: "", email: "", phone: "", message: "" });
   const [errors, setErrors] = useState<{ email?: string; phone?: string }>({});
   const [hasStartedChat, setHasStartedChat] = useState(false);
   const [isSubmittingLead, setIsSubmittingLead] = useState(false);
@@ -334,79 +336,98 @@ const Chat = () => {
         </div>
 
         {/* Lead Form */}
-        <div className="flex-1 flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-card rounded-2xl p-6 shadow-lg border border-border">
-            <div className="text-center mb-6">
+        <div className="flex-1 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="w-full max-w-lg bg-card rounded-2xl p-6 md:p-8 shadow-lg border border-border my-4">
+            <div className="text-center mb-8">
               <img 
                 src={chatAvatar} 
                 alt="Ana" 
-                className="w-20 h-20 rounded-full object-cover border-4 border-primary/20 mx-auto mb-4" 
+                className="w-24 h-24 rounded-full object-cover border-4 border-primary/20 mx-auto mb-4 shadow-lg" 
               />
-              <h1 className="text-xl font-bold text-foreground">Olá! Sou a Ana</h1>
-              <p className="text-muted-foreground mt-2">
-                Para iniciar nossa conversa, por favor me conte um pouco sobre você.
+              <h1 className="text-2xl font-bold text-foreground">Olá! Sou a Ana</h1>
+              <p className="text-muted-foreground mt-2 max-w-sm mx-auto">
+                Para iniciar nossa conversa, por favor me conte um pouco sobre você e como posso ajudar.
               </p>
             </div>
 
             <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Nome</Label>
-                <Input
-                  id="name"
-                  placeholder="Seu nome completo"
-                  value={leadInfo.name}
-                  onChange={(e) => setLeadInfo(prev => ({ ...prev, name: e.target.value }))}
-                  onKeyDown={handleLeadKeyDown}
-                />
+              {/* Two columns for Name and Company on larger screens */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nome</Label>
+                  <Input
+                    id="name"
+                    placeholder="Seu nome completo"
+                    value={leadInfo.name}
+                    onChange={(e) => setLeadInfo(prev => ({ ...prev, name: e.target.value }))}
+                    onKeyDown={handleLeadKeyDown}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="company">Empresa <span className="text-muted-foreground text-xs">(opcional)</span></Label>
+                  <Input
+                    id="company"
+                    placeholder="Nome da sua empresa"
+                    value={leadInfo.company}
+                    onChange={(e) => setLeadInfo(prev => ({ ...prev, company: e.target.value }))}
+                    onKeyDown={handleLeadKeyDown}
+                  />
+                </div>
               </div>
 
+              {/* Two columns for Email and Phone */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <Label htmlFor="email">E-mail</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="seu@email.com"
+                    value={leadInfo.email}
+                    onChange={handleEmailChange}
+                    onKeyDown={handleLeadKeyDown}
+                    className={errors.email ? "border-destructive" : ""}
+                  />
+                  {errors.email && (
+                    <p className="text-xs text-destructive">{errors.email}</p>
+                  )}
+                </div>
+                
+                <div className="space-y-1">
+                  <Label htmlFor="phone">Telefone</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    placeholder="(00) 00000-0000"
+                    value={leadInfo.phone}
+                    onChange={handlePhoneChange}
+                    onKeyDown={handleLeadKeyDown}
+                    className={errors.phone ? "border-destructive" : ""}
+                  />
+                  {errors.phone && (
+                    <p className="text-xs text-destructive">{errors.phone}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Message field - full width */}
               <div className="space-y-2">
-                <Label htmlFor="company">Empresa <span className="text-muted-foreground text-xs">(opcional)</span></Label>
-                <Input
-                  id="company"
-                  placeholder="Nome da sua empresa"
-                  value={leadInfo.company}
-                  onChange={(e) => setLeadInfo(prev => ({ ...prev, company: e.target.value }))}
-                  onKeyDown={handleLeadKeyDown}
+                <Label htmlFor="message">Mensagem <span className="text-muted-foreground text-xs">(opcional)</span></Label>
+                <Textarea
+                  id="message"
+                  placeholder="Como posso ajudá-lo hoje? Conte-me sobre seu negócio ou dúvida..."
+                  value={leadInfo.message}
+                  onChange={(e) => setLeadInfo(prev => ({ ...prev, message: e.target.value }))}
+                  className="min-h-[100px] resize-none"
+                  rows={4}
                 />
-              </div>
-              
-              <div className="space-y-1">
-                <Label htmlFor="email">E-mail</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={leadInfo.email}
-                  onChange={handleEmailChange}
-                  onKeyDown={handleLeadKeyDown}
-                  className={errors.email ? "border-destructive" : ""}
-                />
-                {errors.email && (
-                  <p className="text-xs text-destructive">{errors.email}</p>
-                )}
-              </div>
-              
-              <div className="space-y-1">
-                <Label htmlFor="phone">Telefone</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="(00) 00000-0000"
-                  value={leadInfo.phone}
-                  onChange={handlePhoneChange}
-                  onKeyDown={handleLeadKeyDown}
-                  className={errors.phone ? "border-destructive" : ""}
-                />
-                {errors.phone && (
-                  <p className="text-xs text-destructive">{errors.phone}</p>
-                )}
               </div>
 
               <Button 
                 onClick={startChat} 
                 disabled={!isFormValid() || isSubmittingLead}
-                className="w-full mt-2"
+                className="w-full mt-4"
                 size="lg"
               >
                 {isSubmittingLead ? (

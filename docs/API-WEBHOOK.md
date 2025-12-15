@@ -40,7 +40,8 @@ Content-Type: application/json
     "name": "João Silva",
     "email": "joao@empresa.com.br",
     "phone": "11 99999-9999",
-    "company": "Empresa LTDA"
+    "company": "Empresa LTDA",
+    "message": "Gostaria de saber mais sobre o módulo de Materiais de Construção"
   },
   "timestamp": "2024-01-15T13:30:00.000Z"
 }
@@ -55,6 +56,7 @@ Content-Type: application/json
 | `lead.email` | string | ✅ | E-mail validado |
 | `lead.phone` | string | ✅ | Telefone no formato `XX XXXXX-XXXX` |
 | `lead.company` | string | ❌ | Nome da empresa (opcional) |
+| `lead.message` | string | ❌ | Mensagem inicial do lead (opcional) |
 | `timestamp` | string | ✅ | Data/hora ISO 8601 |
 
 #### Response Esperada
