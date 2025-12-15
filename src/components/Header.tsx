@@ -1,5 +1,6 @@
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogIn } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/Logo";
 
@@ -8,6 +9,7 @@ interface HeaderProps {
 }
 
 const Header = ({ onOpenChat }: HeaderProps) => {
+  const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const scrollToSection = (id: string) => {
@@ -44,6 +46,14 @@ const Header = ({ onOpenChat }: HeaderProps) => {
               {link.label}
             </button>
           ))}
+          <Button 
+            variant="outline" 
+            onClick={() => navigate("/login")}
+            className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+          >
+            <LogIn className="w-4 h-4 mr-2" />
+            Entrar
+          </Button>
           <Button onClick={onOpenChat}>Converse conosco</Button>
         </nav>
 
@@ -68,6 +78,14 @@ const Header = ({ onOpenChat }: HeaderProps) => {
               {link.label}
             </button>
           ))}
+          <Button 
+            variant="outline"
+            onClick={() => { navigate("/login"); setMobileMenuOpen(false); }}
+            className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+          >
+            <LogIn className="w-4 h-4 mr-2" />
+            Entrar
+          </Button>
           <Button onClick={() => { onOpenChat(); setMobileMenuOpen(false); }}>
             Converse conosco
           </Button>
