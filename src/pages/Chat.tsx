@@ -113,6 +113,13 @@ const Chat = () => {
     if (audioRecorder.state === "idle") {
       await audioRecorder.startRecording();
     } else if (audioRecorder.state === "recording") {
+      // Cancelar gravação sem enviar
+      audioRecorder.cancelRecording();
+    }
+  };
+
+  const handleSendAudio = async () => {
+    if (audioRecorder.state === "recording") {
       const audioBase64 = await audioRecorder.stopRecording();
       if (audioBase64) {
         sendAudioMessage(audioBase64);
@@ -681,8 +688,8 @@ const Chat = () => {
             )}
           </Button>
           <Button 
-            onClick={sendMessage} 
-            disabled={!input.trim() || audioRecorder.state !== "idle"}
+            onClick={audioRecorder.state === "recording" ? handleSendAudio : sendMessage} 
+            disabled={audioRecorder.state === "idle" && !input.trim()}
           >
             <Send className="w-4 h-4" />
           </Button>
