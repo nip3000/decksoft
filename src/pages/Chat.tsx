@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import chatAvatar from "@/assets/chat-avatar.jpg";
 import AudioWaveform from "@/components/AudioWaveform";
+import AudioPlayer from "@/components/AudioPlayer";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,6 +28,8 @@ interface Message {
   content: string;
   timestamp: string; // ISO string in Brasilia timezone (not displayed)
   status?: "sent" | "read"; // For user messages only
+  audioData?: string; // Base64 audio data for voice messages
+  isAudio?: boolean; // Flag to identify audio messages
 }
 
 interface LeadInfo {
@@ -212,6 +215,8 @@ const Chat = () => {
       content: "🎤 Mensagem de voz",
       timestamp: getBrasiliaTimestamp(),
       status: "sent",
+      audioData: audioBase64,
+      isAudio: true,
     };
 
     setMessages(prev => [...prev, userMessage]);
@@ -682,7 +687,11 @@ const Chat = () => {
                         : "bg-muted text-foreground rounded-tl-sm"
                     )}
                   >
-                    <p className="whitespace-pre-wrap">{message.content}</p>
+                    {message.isAudio && message.audioData ? (
+                      <AudioPlayer audioData={message.audioData} />
+                    ) : (
+                      <p className="whitespace-pre-wrap">{message.content}</p>
+                    )}
                   </div>
                   {message.role === "user" && (
                     <div className="flex items-center gap-1 mt-1 mr-1 relative h-4">
