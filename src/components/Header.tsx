@@ -130,7 +130,10 @@ const Header = ({ onOpenChat }: HeaderProps) => {
               key={link.id}
               onClick={() => scrollToSection(link.id)}
               className={cn(
-                "text-muted-foreground hover:text-foreground transition-all text-left",
+                "transition-all text-left",
+                activeSection === link.id
+                  ? "text-primary font-medium"
+                  : "text-muted-foreground hover:text-foreground",
                 mobileMenuOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
               )}
               style={{ transitionDelay: mobileMenuOpen ? `${index * 50}ms` : "0ms" }}
