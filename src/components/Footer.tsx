@@ -1,7 +1,11 @@
-import { Mail, Phone, MapPin, Linkedin, Instagram, Facebook, Youtube } from "lucide-react";
+import { Mail, Phone, MapPin, Linkedin, Instagram, Facebook, Youtube, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Logo from "@/components/Logo";
+import { Button } from "@/components/ui/button";
 
 const Footer = () => {
+  const navigate = useNavigate();
+
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     element?.scrollIntoView({ behavior: "smooth" });
@@ -112,18 +116,27 @@ const Footer = () => {
         </div>
 
         {/* Bottom */}
-        <div className="mt-8 md:mt-12 pt-4 md:pt-6 border-t border-border flex flex-col md:flex-row justify-between items-center gap-3 md:gap-4">
-          <p className="text-xs md:text-sm text-muted-foreground text-center md:text-left">
-            © {new Date().getFullYear()} DeckSoft. Todos os direitos reservados.
-          </p>
-          <div className="flex gap-4 md:gap-6 text-xs md:text-sm">
-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-              Política de Privacidade
-            </a>
-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-              Termos de Uso
-            </a>
+        <div className="mt-8 md:mt-12 pt-4 md:pt-6 border-t border-border flex flex-col items-center gap-4">
+          <div className="flex flex-col md:flex-row justify-between items-center w-full gap-3 md:gap-4">
+            <p className="text-xs md:text-sm text-muted-foreground text-center md:text-left">
+              © {new Date().getFullYear()} DeckSoft. Todos os direitos reservados.
+            </p>
+            <div className="flex gap-4 md:gap-6 text-xs md:text-sm">
+              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                Política de Privacidade
+              </a>
+              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+                Termos de Uso
+              </a>
+            </div>
           </div>
+          <Button 
+            onClick={() => navigate("/chat")}
+            className="group"
+          >
+            Conversar com a Ana hoje
+            <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </Button>
         </div>
       </div>
     </footer>
