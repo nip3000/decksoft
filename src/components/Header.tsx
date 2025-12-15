@@ -22,21 +22,25 @@ const Header = ({ onOpenChat }: HeaderProps) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = navLinks.map(link => ({
-        id: link.id,
-        element: document.getElementById(link.id)
-      }));
+      const sections = navLinks
+        .map(link => ({
+          id: link.id,
+          element: document.getElementById(link.id)
+        }))
+        .filter(s => s.element !== null)
+        .map(s => ({
+          id: s.id,
+          offsetTop: s.element!.offsetTop
+        }))
+        .sort((a, b) => a.offsetTop - b.offsetTop);
 
-      const scrollPosition = window.scrollY + 100;
+      const scrollPosition = window.scrollY + 150;
 
+      // Find the section currently in view (iterate from bottom to top of page)
       for (let i = sections.length - 1; i >= 0; i--) {
-        const section = sections[i];
-        if (section.element) {
-          const offsetTop = section.element.offsetTop;
-          if (scrollPosition >= offsetTop) {
-            setActiveSection(section.id);
-            return;
-          }
+        if (scrollPosition >= sections[i].offsetTop) {
+          setActiveSection(sections[i].id);
+          return;
         }
       }
       setActiveSection(null);
