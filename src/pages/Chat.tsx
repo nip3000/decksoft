@@ -200,7 +200,7 @@ const Chat = () => {
   };
 
   const sendMessageWithContent = async (content: string) => {
-    if (!content.trim()) return;
+    if (!content.trim() || isLoading) return;
 
     const userMessage: Message = {
       id: crypto.randomUUID(),
@@ -542,10 +542,10 @@ const Chat = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Digite sua mensagem..."
-            disabled={isTyping}
+            disabled={isLoading || isTyping}
             className="flex-1"
           />
-          <Button onClick={sendMessage} disabled={isTyping || !input.trim()}>
+          <Button onClick={sendMessage} disabled={isLoading || isTyping || !input.trim()}>
             <Send className="w-4 h-4" />
           </Button>
         </div>
