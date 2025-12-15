@@ -21,34 +21,51 @@ const Header = ({ onOpenChat }: HeaderProps) => {
   ];
 
   useEffect(() => {
-    const handleScroll = () => {
-      const sections = navLinks
-        .map(link => ({
-          id: link.id,
-          element: document.getElementById(link.id)
-        }))
-        .filter(s => s.element !== null)
-        .map(s => ({
-          id: s.id,
-          offsetTop: s.element!.offsetTop
-        }))
-        .sort((a, b) => a.offsetTop - b.offsetTop);
+    const observers: IntersectionObserver[] = [];
+    const visibleSections = new Map<string, number>();
 
-      const scrollPosition = window.scrollY + 150;
+    navLinks.forEach(link => {
+      const element = document.getElementById(link.id);
+      if (!element) return;
 
-      // Find the section currently in view (iterate from bottom to top of page)
-      for (let i = sections.length - 1; i >= 0; i--) {
-        if (scrollPosition >= sections[i].offsetTop) {
-          setActiveSection(sections[i].id);
-          return;
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              visibleSections.set(link.id, entry.intersectionRatio);
+            } else {
+              visibleSections.delete(link.id);
+            }
+
+            // Find the section with highest visibility or first visible
+            if (visibleSections.size === 0) {
+              setActiveSection(null);
+            } else {
+              // Get sections in order of appearance on page
+              const orderedIds = navLinks
+                .map(l => l.id)
+                .filter(id => visibleSections.has(id));
+              
+              if (orderedIds.length > 0) {
+                // Pick the first visible section in DOM order
+                setActiveSection(orderedIds[0]);
+              }
+            }
+          });
+        },
+        {
+          threshold: [0, 0.1, 0.25, 0.5],
+          rootMargin: "-20% 0px -60% 0px"
         }
-      }
-      setActiveSection(null);
-    };
+      );
 
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+      observer.observe(element);
+      observers.push(observer);
+    });
+
+    return () => {
+      observers.forEach(observer => observer.disconnect());
+    };
   }, []);
 
   const scrollToSection = (id: string) => {
