@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import chatAvatar from "@/assets/chat-avatar.jpg";
+import AudioWaveform from "@/components/AudioWaveform";
 
 interface Message {
   id: string;
@@ -636,11 +637,19 @@ const Chat = () => {
       <div className="border-t border-border p-4 shrink-0 bg-card">
         <div className="max-w-3xl mx-auto flex gap-2">
           {audioRecorder.state === "recording" ? (
-            <div className="flex-1 flex items-center gap-3 px-3 py-2 bg-destructive/10 rounded-md border border-destructive/30">
-              <span className="w-3 h-3 bg-destructive rounded-full animate-pulse"></span>
-              <span className="text-sm font-medium text-destructive">
-                Gravando... {formatDuration(audioRecorder.duration)}
-              </span>
+            <div className="flex-1 flex items-center justify-between gap-3 px-4 py-2 bg-destructive/10 rounded-md border border-destructive/30">
+              <div className="flex items-center gap-3">
+                <span className="w-2.5 h-2.5 bg-destructive rounded-full animate-pulse"></span>
+                <span className="text-sm font-medium text-destructive">
+                  Gravando...
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <AudioWaveform barCount={5} />
+                <span className="text-sm font-mono text-destructive/80">
+                  {formatDuration(audioRecorder.duration)}
+                </span>
+              </div>
             </div>
           ) : (
             <Input
