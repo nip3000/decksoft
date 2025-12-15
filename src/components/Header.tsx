@@ -1,5 +1,5 @@
 import { Menu, X, LogIn } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/Logo";
@@ -12,6 +12,40 @@ interface HeaderProps {
 const Header = ({ onOpenChat }: HeaderProps) => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+
+  const navLinks = [
+    { label: "Depoimentos", id: "testimonials" },
+    { label: "Planos", id: "pricing" },
+    { label: "FAQ", id: "faq" },
+  ];
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = navLinks.map(link => ({
+        id: link.id,
+        element: document.getElementById(link.id)
+      }));
+
+      const scrollPosition = window.scrollY + 100;
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = sections[i];
+        if (section.element) {
+          const offsetTop = section.element.offsetTop;
+          if (scrollPosition >= offsetTop) {
+            setActiveSection(section.id);
+            return;
+          }
+        }
+      }
+      setActiveSection(null);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -22,12 +56,6 @@ const Header = ({ onOpenChat }: HeaderProps) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
-  const navLinks = [
-    { label: "Depoimentos", id: "testimonials" },
-    { label: "Planos", id: "pricing" },
-    { label: "FAQ", id: "faq" },
-  ];
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-card border-b border-border shadow-sm">
@@ -42,7 +70,12 @@ const Header = ({ onOpenChat }: HeaderProps) => {
             <button
               key={link.id}
               onClick={() => scrollToSection(link.id)}
-              className="relative text-muted-foreground hover:text-foreground transition-colors after:content-[''] after:absolute after:w-full after:scale-x-0 after:h-0.5 after:bottom-0 after:left-0 after:bg-green-600 after:origin-bottom-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-bottom-left"
+              className={cn(
+                "relative transition-colors after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-primary after:transition-transform after:duration-300",
+                activeSection === link.id
+                  ? "text-primary after:scale-x-100"
+                  : "text-muted-foreground hover:text-foreground after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left"
+              )}
             >
               {link.label}
             </button>
