@@ -137,6 +137,8 @@ const Chat = () => {
       ));
     }, 800);
 
+    setIsTyping(true);
+
     try {
       const response = await fetchWithoutTimeout(WEBHOOK_URL, {
         method: "POST",
@@ -181,6 +183,8 @@ const Chat = () => {
       };
       setMessages(prev => [...prev, errorMessage]);
       setTimeout(() => inputRef.current?.focus(), 100);
+    } finally {
+      setIsTyping(false);
     }
   };
 
@@ -287,6 +291,8 @@ const Chat = () => {
       ));
     }, 800);
 
+    setIsTyping(true);
+
     try {
       if (!WEBHOOK_URL) {
         await new Promise(resolve => setTimeout(resolve, 1500));
@@ -342,6 +348,8 @@ const Chat = () => {
       setMessages(prev => [...prev, errorMessage]);
       // Focus input after error message
       setTimeout(() => inputRef.current?.focus(), 100);
+    } finally {
+      setIsTyping(false);
     }
   };
 
