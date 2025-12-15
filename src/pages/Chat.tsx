@@ -352,11 +352,15 @@ const Chat = () => {
     hasInitialized.current = true;
 
     const sendInitialMessage = async () => {
-      // Build the message to send
-      // Priority: lead form message > URL message > default message with lead name/company
+      // Build the message to send - always include lead intro (name/company)
       const companyText = leadInfo.company.trim() ? `, da empresa ${leadInfo.company.trim()}` : "";
-      const defaultMessage = `Oi Ana, tudo bem? Sou o ${leadInfo.name}${companyText}, gostaria de mais informações sobre os serviços de vocês.`;
-      const messageToSend = leadInfo.message.trim() || initialMessage || defaultMessage;
+      const intro = `Oi Ana, tudo bem? Sou o ${leadInfo.name}${companyText}`;
+      
+      // If user wrote a custom message, prepend the intro
+      const customMessage = leadInfo.message.trim() || initialMessage;
+      const messageToSend = customMessage 
+        ? `${intro}. ${customMessage}`
+        : `${intro}, gostaria de mais informações sobre os serviços de vocês.`;
       
       // Small delay for smooth transition
       await new Promise(resolve => setTimeout(resolve, 300));
