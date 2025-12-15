@@ -27,6 +27,42 @@ interface LeadInfo {
   message: string;
 }
 
+function TypingIndicator({ avatarSrc }: { avatarSrc: string }) {
+  const [entered, setEntered] = useState(false);
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setEntered(true));
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  return (
+    <div
+      className={cn(
+        "flex justify-start transition-all duration-500 ease-out",
+        entered
+          ? "opacity-100 translate-y-0 blur-0 scale-100"
+          : "opacity-0 translate-y-2 blur-sm scale-[0.98]"
+      )}
+    >
+      <img
+        src={avatarSrc}
+        alt="Ana"
+        className="w-8 h-8 rounded-full object-cover flex-shrink-0 mr-2 mt-1 ring-2 ring-primary/20"
+      />
+      <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-3">
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground font-medium">Ana está digitando</span>
+          <div className="flex items-center gap-0.5">
+            <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0ms]"></span>
+            <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:150ms]"></span>
+            <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:300ms]"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const WEBHOOK_URL = "https://repetiva-n8n.hfnc82.easypanel.host/webhook/240b36f9-9d6d-4946-864b-8b681f3ec906";
 
 // Greeting messages removed - chat now starts directly with lead's message
@@ -105,6 +141,33 @@ const Chat = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const hasInitialized = useRef(false);
 
+  const pendingResponsesRef = useRef(0);
+  const typingIndicatorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    pendingResponsesRef.current = pendingResponses;
+  }, [pendingResponses]);
+
+  useEffect(() => {
+    return () => {
+      if (typingIndicatorTimerRef.current) {
+        clearTimeout(typingIndicatorTimerRef.current);
+      }
+    };
+  }, []);
+
+  const scheduleTypingIndicator = () => {
+    if (typingIndicatorTimerRef.current) {
+      clearTimeout(typingIndicatorTimerRef.current);
+    }
+
+    typingIndicatorTimerRef.current = setTimeout(() => {
+      if (pendingResponsesRef.current > 0) {
+        setShowTypingIndicator(true);
+      }
+    }, 2000);
+  };
+
   // Audio recording
   const audioRecorder = useAudioRecorder({
     maxDuration: 120,
@@ -141,14 +204,12 @@ const Chat = () => {
     setMessages(prev => [...prev, userMessage]);
     setIsUploadingAudio(true);
 
-    // Mark message as read after a brief delay, then show typing indicator after 2s
-    // Mark message as read after 800ms, then show typing indicator after additional 2s
+    // Mark message as read after 800ms, then show typing indicator 2s later
     setTimeout(() => {
-      setMessages(prev => prev.map(msg => 
-        msg.id === userMessage.id ? { ...msg, status: "read" } : msg
-      ));
-      // Show typing indicator 2 seconds after message is read
-      setTimeout(() => setShowTypingIndicator(true), 2000);
+      setMessages(prev =>
+        prev.map(msg => (msg.id === userMessage.id ? { ...msg, status: "read" } : msg))
+      );
+      scheduleTypingIndicator();
     }, 800);
 
     setPendingResponses(prev => prev + 1);
@@ -205,8 +266,17 @@ const Chat = () => {
       // Silently handle errors for parallel messages - don't show in chat
       setTimeout(() => inputRef.current?.focus(), 100);
     } finally {
-      setShowTypingIndicator(false);
-      setPendingResponses(prev => Math.max(0, prev - 1));
+      setPendingResponses(prev => {
+        const next = Math.max(0, prev - 1);
+        if (next === 0) {
+          if (typingIndicatorTimerRef.current) {
+            clearTimeout(typingIndicatorTimerRef.current);
+            typingIndicatorTimerRef.current = null;
+          }
+          setShowTypingIndicator(false);
+        }
+        return next;
+      });
     }
   };
 
@@ -306,13 +376,12 @@ const Chat = () => {
     setMessages(prev => [...prev, userMessage]);
     setInput("");
 
-    // Mark message as read after 800ms, then show typing indicator after additional 2s
+    // Mark message as read after 800ms, then show typing indicator 2s later
     setTimeout(() => {
-      setMessages(prev => prev.map(msg => 
-        msg.id === userMessage.id ? { ...msg, status: "read" } : msg
-      ));
-      // Show typing indicator 2 seconds after message is read
-      setTimeout(() => setShowTypingIndicator(true), 2000);
+      setMessages(prev =>
+        prev.map(msg => (msg.id === userMessage.id ? { ...msg, status: "read" } : msg))
+      );
+      scheduleTypingIndicator();
     }, 800);
 
     setPendingResponses(prev => prev + 1);
@@ -367,8 +436,17 @@ const Chat = () => {
       // Silently handle errors for parallel messages - don't show in chat
       setTimeout(() => inputRef.current?.focus(), 100);
     } finally {
-      setShowTypingIndicator(false);
-      setPendingResponses(prev => Math.max(0, prev - 1));
+      setPendingResponses(prev => {
+        const next = Math.max(0, prev - 1);
+        if (next === 0) {
+          if (typingIndicatorTimerRef.current) {
+            clearTimeout(typingIndicatorTimerRef.current);
+            typingIndicatorTimerRef.current = null;
+          }
+          setShowTypingIndicator(false);
+        }
+        return next;
+      });
     }
   };
 
@@ -622,30 +700,7 @@ const Chat = () => {
               </div>
             ))}
 
-            {isTyping && (
-              <div 
-                className="flex justify-start opacity-0 translate-y-3"
-                style={{
-                  animation: 'typingIndicatorIn 0.5s ease-out 0.1s forwards'
-                }}
-              >
-                <img 
-                  src={chatAvatar} 
-                  alt="Ana" 
-                  className="w-8 h-8 rounded-full object-cover flex-shrink-0 mr-2 mt-1 ring-2 ring-primary/20" 
-                />
-                <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground font-medium">Ana está digitando</span>
-                    <div className="flex items-center gap-0.5">
-                      <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0ms]"></span>
-                      <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:150ms]"></span>
-                      <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:300ms]"></span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            {isTyping && <TypingIndicator avatarSrc={chatAvatar} />}
           </div>
         </div>
 
