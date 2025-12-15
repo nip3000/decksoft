@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Building2, Wheat, Fuel } from "lucide-react";
+import { Building2, Wheat, Fuel, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import ModuleCard from "@/components/ModuleCard";
@@ -151,6 +152,14 @@ const Index = () => {
                 </AnimatedSection>
               ))}
             </div>
+            
+            {/* CTA Button */}
+            <AnimatedSection delay={450} animation="fade-up" className="mt-8 text-center">
+              <Button size="lg" onClick={openChat} className="gap-2">
+                Converse com a Ana
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </AnimatedSection>
           </section>
         </div>
       </main>
