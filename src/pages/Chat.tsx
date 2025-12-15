@@ -175,8 +175,9 @@ const Chat = () => {
       setIsTyping(false);
       
       // Send initial message after greetings
-      // Priority: lead form message > URL message > default message with lead name
-      const defaultMessage = `Oi Ana, tudo bem? Sou o ${leadInfo.name}, gostaria de mais informações sobre os serviços de vocês.`;
+      // Priority: lead form message > URL message > default message with lead name/company
+      const companyText = leadInfo.company.trim() ? `, da empresa ${leadInfo.company.trim()}` : "";
+      const defaultMessage = `Oi Ana, tudo bem? Sou o ${leadInfo.name}${companyText}, gostaria de mais informações sobre os serviços de vocês.`;
       const messageToSend = leadInfo.message.trim() || initialMessage || defaultMessage;
       
       await new Promise(resolve => setTimeout(resolve, 500));
