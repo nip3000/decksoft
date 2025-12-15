@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { ArrowLeft, Send, Loader2, ArrowUp, MessageCircle, Check, CheckCheck, User } from "lucide-react";
+import { ArrowLeft, Send, Loader2, ArrowUp, MessageCircle, Check, CheckCheck, User, Mic, Square } from "lucide-react";
+import { useAudioRecorder, formatDuration } from "@/hooks/use-audio-recorder";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -99,6 +101,93 @@ const Chat = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const hasInitialized = useRef(false);
+
+  // Audio recording
+  const audioRecorder = useAudioRecorder({
+    maxDuration: 120,
+    onError: (error) => toast.error(error),
+  });
+
+  const handleMicClick = async () => {
+    if (audioRecorder.state === "idle") {
+      await audioRecorder.startRecording();
+    } else if (audioRecorder.state === "recording") {
+      const audioBase64 = await audioRecorder.stopRecording();
+      if (audioBase64) {
+        sendAudioMessage(audioBase64);
+      }
+    }
+  };
+
+  const sendAudioMessage = async (audioBase64: string) => {
+    if (isLoading) return;
+
+    const userMessage: Message = {
+      id: crypto.randomUUID(),
+      role: "user",
+      content: "🎤 Mensagem de voz",
+      timestamp: getBrasiliaTimestamp(),
+      status: "sent",
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setIsLoading(true);
+
+    // Mark message as read after a brief delay
+    setTimeout(() => {
+      setMessages(prev => prev.map(msg => 
+        msg.id === userMessage.id ? { ...msg, status: "read" } : msg
+      ));
+    }, 800);
+
+    try {
+      const response = await fetchWithoutTimeout(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          type: "audio_message",
+          audio: audioBase64,
+          format: "webm",
+          timestamp: userMessage.timestamp,
+          history: messages,
+          lead: leadInfo
+        }),
+      });
+
+      if (!response.ok) {
+        const status = response.status;
+        if (status >= 500) {
+          throw new Error("Servidor temporariamente indisponível");
+        } else if (status === 429) {
+          throw new Error("Muitas requisições. Aguarde um momento.");
+        } else {
+          throw new Error("Erro na comunicação");
+        }
+      }
+
+      const data = await response.json();
+      const assistantMessage: Message = {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content: data.text || data.response || data.message || "Desculpe, não consegui processar sua mensagem.",
+        timestamp: getBrasiliaTimestamp(),
+      };
+      setMessages(prev => [...prev, assistantMessage]);
+      setTimeout(() => inputRef.current?.focus(), 100);
+    } catch (error) {
+      console.error("Audio message error:", error);
+      const errorMessage: Message = {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content: getErrorMessage(error),
+        timestamp: getBrasiliaTimestamp(),
+      };
+      setMessages(prev => [...prev, errorMessage]);
+      setTimeout(() => inputRef.current?.focus(), 100);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const validateForm = (): boolean => {
     const newErrors: { email?: string; phone?: string } = {};
@@ -546,16 +635,43 @@ const Chat = () => {
       {/* Input Area */}
       <div className="border-t border-border p-4 shrink-0 bg-card">
         <div className="max-w-3xl mx-auto flex gap-2">
-          <Input
-            ref={inputRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Digite sua mensagem..."
-            disabled={isLoading || isTyping}
-            className="flex-1"
-          />
-          <Button onClick={sendMessage} disabled={isLoading || isTyping || !input.trim()}>
+          {audioRecorder.state === "recording" ? (
+            <div className="flex-1 flex items-center gap-3 px-3 py-2 bg-destructive/10 rounded-md border border-destructive/30">
+              <span className="w-3 h-3 bg-destructive rounded-full animate-pulse"></span>
+              <span className="text-sm font-medium text-destructive">
+                Gravando... {formatDuration(audioRecorder.duration)}
+              </span>
+            </div>
+          ) : (
+            <Input
+              ref={inputRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Digite sua mensagem..."
+              disabled={isLoading || isTyping || audioRecorder.state === "processing"}
+              className="flex-1"
+            />
+          )}
+          <Button
+            variant={audioRecorder.state === "recording" ? "destructive" : "outline"}
+            size="icon"
+            onClick={handleMicClick}
+            disabled={isLoading || isTyping || audioRecorder.state === "processing"}
+            className={audioRecorder.state === "recording" ? "animate-pulse" : ""}
+          >
+            {audioRecorder.state === "processing" ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : audioRecorder.state === "recording" ? (
+              <Square className="w-4 h-4" />
+            ) : (
+              <Mic className="w-4 h-4" />
+            )}
+          </Button>
+          <Button 
+            onClick={sendMessage} 
+            disabled={isLoading || isTyping || !input.trim() || audioRecorder.state !== "idle"}
+          >
             <Send className="w-4 h-4" />
           </Button>
         </div>
