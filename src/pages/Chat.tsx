@@ -95,7 +95,6 @@ const Chat = () => {
   
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   
   const [isTyping, setIsTyping] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -121,8 +120,6 @@ const Chat = () => {
   };
 
   const sendAudioMessage = async (audioBase64: string) => {
-    if (isLoading) return;
-
     const userMessage: Message = {
       id: crypto.randomUUID(),
       role: "user",
@@ -132,7 +129,6 @@ const Chat = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
-    setIsLoading(true);
 
     // Mark message as read after a brief delay
     setTimeout(() => {
@@ -185,8 +181,6 @@ const Chat = () => {
       };
       setMessages(prev => [...prev, errorMessage]);
       setTimeout(() => inputRef.current?.focus(), 100);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -273,7 +267,7 @@ const Chat = () => {
   };
 
   const sendMessageWithContent = async (content: string) => {
-    if (!content.trim() || isLoading) return;
+    if (!content.trim()) return;
 
     const userMessage: Message = {
       id: crypto.randomUUID(),
@@ -285,7 +279,6 @@ const Chat = () => {
 
     setMessages(prev => [...prev, userMessage]);
     setInput("");
-    setIsLoading(true);
 
     // Mark message as read after a brief delay (simulating server acknowledgment)
     setTimeout(() => {
@@ -349,8 +342,6 @@ const Chat = () => {
       setMessages(prev => [...prev, errorMessage]);
       // Focus input after error message
       setTimeout(() => inputRef.current?.focus(), 100);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -604,7 +595,7 @@ const Chat = () => {
               </div>
             ))}
 
-            {(isTyping || isLoading) && (
+            {isTyping && (
               <div className="flex justify-start">
                 <img 
                   src={chatAvatar} 
@@ -652,13 +643,13 @@ const Chat = () => {
               </div>
             </div>
           ) : (
-            <Input
+          <Input
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Digite sua mensagem..."
-              disabled={isLoading || isTyping || audioRecorder.state === "processing"}
+              disabled={isTyping || audioRecorder.state === "processing"}
               className="flex-1"
             />
           )}
@@ -666,7 +657,7 @@ const Chat = () => {
             variant={audioRecorder.state === "recording" ? "destructive" : "outline"}
             size="icon"
             onClick={handleMicClick}
-            disabled={isLoading || isTyping || audioRecorder.state === "processing"}
+            disabled={isTyping || audioRecorder.state === "processing"}
             className={audioRecorder.state === "recording" ? "animate-pulse" : ""}
           >
             {audioRecorder.state === "processing" ? (
@@ -679,7 +670,7 @@ const Chat = () => {
           </Button>
           <Button 
             onClick={sendMessage} 
-            disabled={isLoading || isTyping || !input.trim() || audioRecorder.state !== "idle"}
+            disabled={isTyping || !input.trim() || audioRecorder.state !== "idle"}
           >
             <Send className="w-4 h-4" />
           </Button>
