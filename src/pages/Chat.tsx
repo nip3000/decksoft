@@ -26,11 +26,7 @@ interface LeadInfo {
 
 const WEBHOOK_URL = "https://repetiva-n8n.hfnc82.easypanel.host/webhook/240b36f9-9d6d-4946-864b-8b681f3ec906";
 
-const greetingMessages = [
-  "Olá! 👋 Seja bem-vindo(a) à DeckSoft!",
-  "Estou aqui para entender seu negócio e identificar como posso ajudar a resolver seus desafios com nossas soluções.",
-  "Como posso ajudá-lo(a) hoje?"
-];
+// Greeting messages removed - chat now starts directly with lead's message
 
 // Simple fetch without timeout - waits for webhook response
 const fetchWithoutTimeout = async (
@@ -97,7 +93,7 @@ const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [greetingIndex, setGreetingIndex] = useState(0);
+  
   const [isTyping, setIsTyping] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -149,42 +145,24 @@ const Chat = () => {
     setHasStartedChat(true);
   };
 
-  // Show greeting messages sequentially after chat starts
+  // Send lead's initial message when chat starts
   useEffect(() => {
     if (!hasStartedChat || hasInitialized.current) return;
     hasInitialized.current = true;
 
-    const showGreetings = async () => {
-      for (let i = 0; i < greetingMessages.length; i++) {
-        setIsTyping(true);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        setIsTyping(false);
-        setMessages(prev => [...prev, {
-          id: crypto.randomUUID(),
-          role: "assistant",
-          content: greetingMessages[i],
-          timestamp: getBrasiliaTimestamp()
-        }]);
-        setGreetingIndex(i + 1);
-        
-        if (i < greetingMessages.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, 500));
-        }
-      }
-      setIsTyping(false);
-      
-      // Send initial message after greetings
+    const sendInitialMessage = async () => {
+      // Build the message to send
       // Priority: lead form message > URL message > default message with lead name/company
       const companyText = leadInfo.company.trim() ? `, da empresa ${leadInfo.company.trim()}` : "";
       const defaultMessage = `Oi Ana, tudo bem? Sou o ${leadInfo.name}${companyText}, gostaria de mais informações sobre os serviços de vocês.`;
       const messageToSend = leadInfo.message.trim() || initialMessage || defaultMessage;
       
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Small delay for smooth transition
+      await new Promise(resolve => setTimeout(resolve, 300));
       sendMessageWithContent(messageToSend);
     };
 
-    showGreetings();
+    sendInitialMessage();
   }, [hasStartedChat]);
 
   useEffect(() => {
