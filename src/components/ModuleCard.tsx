@@ -61,14 +61,7 @@ const ModuleCard = ({ icon, title, shortDescription, fullDescription, onLearnMor
         </div>
 
         <div className="pt-4 border-t border-border/50 flex-1 flex flex-col">
-          <p className="text-muted-foreground leading-relaxed text-sm mb-4 flex-1">{fullDescription}</p>
-          <Button 
-            size="sm" 
-            onClick={handleLearnMore}
-            className="w-full"
-          >
-            Saiba mais
-          </Button>
+          <p className="text-muted-foreground leading-relaxed text-sm flex-1">{fullDescription}</p>
         </div>
       </div>
     </div>
