@@ -30,46 +30,16 @@ const greetingMessages = [
   "Como posso ajudá-lo(a) hoje?"
 ];
 
-// Robust fetch with timeout and retry
-const fetchWithRetry = async (
+// Simple fetch without timeout - waits for webhook response
+const fetchWithoutTimeout = async (
   url: string, 
-  options: RequestInit, 
-  retries = 2, 
-  timeout = 30000
+  options: RequestInit
 ): Promise<Response> => {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
-  
-  const fetchOptions: RequestInit = {
-    ...options,
-    signal: controller.signal,
-  };
-  
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    try {
-      const response = await fetch(url, fetchOptions);
-      clearTimeout(timeoutId);
-      return response;
-    } catch (error) {
-      clearTimeout(timeoutId);
-      
-      if (attempt === retries) {
-        throw error;
-      }
-      
-      // Wait before retry (exponential backoff)
-      await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
-    }
-  }
-  
-  throw new Error("Max retries reached");
+  return await fetch(url, options);
 };
 
 const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {
-    if (error.name === 'AbortError') {
-      return "A conexão demorou muito. Por favor, tente novamente.";
-    }
     if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
       return "Sem conexão com a internet. Verifique sua conexão e tente novamente.";
     }
@@ -159,7 +129,7 @@ const Chat = () => {
     
     try {
       // Send lead info to webhook with retry
-      await fetchWithRetry(WEBHOOK_URL, {
+      await fetchWithoutTimeout(WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -167,7 +137,7 @@ const Chat = () => {
           lead: leadInfo,
           timestamp: new Date().toISOString()
         }),
-      }, 2, 15000);
+      });
     } catch (error) {
       console.error("Error sending lead info:", error);
       // Continue to chat even if lead registration fails - we don't want to block the user
@@ -262,7 +232,7 @@ const Chat = () => {
         };
         setMessages(prev => [...prev, assistantMessage]);
       } else {
-        const response = await fetchWithRetry(WEBHOOK_URL, {
+        const response = await fetchWithoutTimeout(WEBHOOK_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ 
@@ -271,7 +241,7 @@ const Chat = () => {
             history: messages,
             lead: leadInfo
           }),
-        }, 2, 30000);
+        });
 
         if (!response.ok) {
           const status = response.status;
