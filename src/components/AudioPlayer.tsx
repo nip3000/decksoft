@@ -13,11 +13,42 @@ const formatTime = (seconds: number): string => {
   return `${mins}:${secs.toString().padStart(2, "0")}`;
 };
 
+const WaveformBars = ({ isPlaying, progress }: { isPlaying: boolean; progress: number }) => {
+  const barCount = 20;
+  
+  return (
+    <div className="flex items-center gap-[2px] h-6 flex-1">
+      {Array.from({ length: barCount }).map((_, i) => {
+        const barProgress = (i / barCount) * 100;
+        const isPast = barProgress < progress;
+        
+        return (
+          <div
+            key={i}
+            className={cn(
+              "w-[3px] rounded-full transition-all duration-150",
+              isPast ? "bg-primary-foreground" : "bg-primary-foreground/40",
+              isPlaying && "animate-waveform"
+            )}
+            style={{
+              height: isPlaying 
+                ? `${Math.random() * 60 + 40}%` 
+                : `${((Math.sin(i * 0.5) + 1) / 2) * 60 + 20}%`,
+              animationDelay: isPlaying ? `${i * 50}ms` : "0ms",
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+};
+
 const AudioPlayer = ({ audioData, className }: AudioPlayerProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [, forceUpdate] = useState(0);
 
   useEffect(() => {
     const audio = new Audio(`data:audio/webm;base64,${audioData}`);
@@ -42,6 +73,17 @@ const AudioPlayer = ({ audioData, className }: AudioPlayerProps) => {
     };
   }, [audioData]);
 
+  // Force re-render for waveform animation while playing
+  useEffect(() => {
+    if (!isPlaying) return;
+    
+    const interval = setInterval(() => {
+      forceUpdate(n => n + 1);
+    }, 150);
+    
+    return () => clearInterval(interval);
+  }, [isPlaying]);
+
   const togglePlay = () => {
     if (!audioRef.current) return;
 
@@ -53,7 +95,7 @@ const AudioPlayer = ({ audioData, className }: AudioPlayerProps) => {
     setIsPlaying(!isPlaying);
   };
 
-  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleWaveformClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!audioRef.current || !duration) return;
 
     const rect = e.currentTarget.getBoundingClientRect();
@@ -68,10 +110,10 @@ const AudioPlayer = ({ audioData, className }: AudioPlayerProps) => {
   const progress = duration ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className={cn("flex items-center gap-3 min-w-[180px]", className)}>
+    <div className={cn("flex items-center gap-3 min-w-[200px]", className)}>
       <button
         onClick={togglePlay}
-        className="w-8 h-8 rounded-full bg-primary-foreground/20 flex items-center justify-center hover:bg-primary-foreground/30 transition-colors"
+        className="w-9 h-9 rounded-full bg-primary-foreground/20 flex items-center justify-center hover:bg-primary-foreground/30 transition-colors flex-shrink-0"
       >
         {isPlaying ? (
           <Pause className="w-4 h-4 text-primary-foreground" />
@@ -82,13 +124,10 @@ const AudioPlayer = ({ audioData, className }: AudioPlayerProps) => {
 
       <div className="flex-1 flex flex-col gap-1">
         <div
-          className="h-1.5 bg-primary-foreground/30 rounded-full cursor-pointer"
-          onClick={handleProgressClick}
+          className="cursor-pointer"
+          onClick={handleWaveformClick}
         >
-          <div
-            className="h-full bg-primary-foreground rounded-full transition-all"
-            style={{ width: `${progress}%` }}
-          />
+          <WaveformBars isPlaying={isPlaying} progress={progress} />
         </div>
         <span className="text-xs text-primary-foreground/80">
           {formatTime(currentTime)} / {formatTime(duration || 0)}
