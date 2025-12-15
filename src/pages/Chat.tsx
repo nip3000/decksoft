@@ -662,7 +662,7 @@ const Chat = () => {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Digite sua mensagem..."
-              disabled={isTyping || audioRecorder.state === "processing"}
+              disabled={audioRecorder.state === "processing"}
               className="flex-1"
             />
           )}
@@ -670,7 +670,7 @@ const Chat = () => {
             variant={audioRecorder.state === "recording" ? "destructive" : "outline"}
             size="icon"
             onClick={handleMicClick}
-            disabled={isTyping || audioRecorder.state === "processing"}
+            disabled={audioRecorder.state === "processing"}
             className={audioRecorder.state === "recording" ? "animate-pulse" : ""}
           >
             {audioRecorder.state === "processing" ? (
@@ -683,7 +683,7 @@ const Chat = () => {
           </Button>
           <Button 
             onClick={sendMessage} 
-            disabled={isTyping || !input.trim() || audioRecorder.state !== "idle"}
+            disabled={!input.trim() || audioRecorder.state !== "idle"}
           >
             <Send className="w-4 h-4" />
           </Button>
