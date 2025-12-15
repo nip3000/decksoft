@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ArrowLeft, Send, Loader2, ArrowUp, MessageCircle, Check, CheckCheck } from "lucide-react";
+import { ArrowLeft, Send, Loader2, ArrowUp, MessageCircle, Check, CheckCheck, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -506,6 +506,11 @@ const Chat = () => {
                     </div>
                   )}
                 </div>
+                {message.role === "user" && (
+                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <User className="w-4 h-4 text-primary" />
+                  </div>
+                )}
               </div>
             ))}
 
