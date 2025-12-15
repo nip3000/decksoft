@@ -153,11 +153,18 @@ const Index = () => {
               ))}
             </div>
             
-            {/* CTA Button */}
-            <AnimatedSection delay={450} animation="fade-up" className="mt-8 text-center">
+{/* CTA Buttons */}
+            <AnimatedSection delay={450} animation="fade-up" className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button size="lg" onClick={openChat} className="gap-2">
                 Converse com a Ana
                 <ArrowRight className="w-4 h-4" />
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline" 
+                onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                Inicie o teste hoje
               </Button>
             </AnimatedSection>
           </section>
