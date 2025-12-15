@@ -27,6 +27,17 @@
   }
 }
 
+@keyframes typingIndicatorIn {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
