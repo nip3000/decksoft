@@ -175,13 +175,7 @@ const Chat = () => {
       setTimeout(() => inputRef.current?.focus(), 100);
     } catch (error) {
       console.error("Audio message error:", error);
-      const errorMessage: Message = {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        content: getErrorMessage(error),
-        timestamp: getBrasiliaTimestamp(),
-      };
-      setMessages(prev => [...prev, errorMessage]);
+      // Silently handle errors for parallel messages - don't show in chat
       setTimeout(() => inputRef.current?.focus(), 100);
     } finally {
       setIsTyping(false);
@@ -339,14 +333,7 @@ const Chat = () => {
       }
     } catch (error) {
       console.error("Chat error:", error);
-      const errorMessage: Message = {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        content: getErrorMessage(error),
-        timestamp: getBrasiliaTimestamp(),
-      };
-      setMessages(prev => [...prev, errorMessage]);
-      // Focus input after error message
+      // Silently handle errors for parallel messages - don't show in chat
       setTimeout(() => inputRef.current?.focus(), 100);
     } finally {
       setIsTyping(false);
