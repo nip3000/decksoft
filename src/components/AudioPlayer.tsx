@@ -8,6 +8,9 @@ interface AudioPlayerProps {
 }
 
 const formatTime = (seconds: number): string => {
+  if (!isFinite(seconds) || isNaN(seconds)) {
+    return "0:00";
+  }
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
   return `${mins}:${secs.toString().padStart(2, "0")}`;
@@ -54,17 +57,36 @@ const AudioPlayer = ({ audioData, className }: AudioPlayerProps) => {
     const audio = new Audio(`data:audio/webm;base64,${audioData}`);
     audioRef.current = audio;
 
-    audio.addEventListener("loadedmetadata", () => {
-      setDuration(audio.duration);
-    });
+    const handleMetadata = () => {
+      if (isFinite(audio.duration) && !isNaN(audio.duration)) {
+        setDuration(audio.duration);
+      }
+    };
+
+    const handleDurationChange = () => {
+      if (isFinite(audio.duration) && !isNaN(audio.duration)) {
+        setDuration(audio.duration);
+      }
+    };
+
+    audio.addEventListener("loadedmetadata", handleMetadata);
+    audio.addEventListener("durationchange", handleDurationChange);
 
     audio.addEventListener("timeupdate", () => {
       setCurrentTime(audio.currentTime);
+      // Fallback: get duration from timeupdate if still unknown
+      if (duration === 0 && isFinite(audio.duration) && !isNaN(audio.duration)) {
+        setDuration(audio.duration);
+      }
     });
 
     audio.addEventListener("ended", () => {
       setIsPlaying(false);
       setCurrentTime(0);
+      // Set final duration when audio ends if we didn't have it
+      if (duration === 0 && isFinite(audio.currentTime) && audio.currentTime > 0) {
+        setDuration(audio.currentTime);
+      }
     });
 
     return () => {
@@ -130,7 +152,7 @@ const AudioPlayer = ({ audioData, className }: AudioPlayerProps) => {
           <WaveformBars isPlaying={isPlaying} progress={progress} />
         </div>
         <span className="text-xs text-primary-foreground/80">
-          {formatTime(currentTime)} / {formatTime(duration || 0)}
+          {formatTime(currentTime)}{duration > 0 ? ` / ${formatTime(duration)}` : ""}
         </span>
       </div>
     </div>
