@@ -231,7 +231,7 @@ const Chat = () => {
         const assistantMessage: Message = {
           id: crypto.randomUUID(),
           role: "assistant",
-          content: data.response || data.message || "Desculpe, não consegui processar sua mensagem.",
+          content: data.text || data.response || data.message || "Desculpe, não consegui processar sua mensagem.",
           timestamp: getBrasiliaTimestamp(),
         };
         setMessages(prev => [...prev, assistantMessage]);
