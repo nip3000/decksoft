@@ -192,4 +192,17 @@ All colors MUST be HSL.
   .animate-scroll-right-fast:hover {
     animation-play-state: paused;
   }
+
+  @keyframes waveform {
+    0%, 100% {
+      transform: scaleY(0.5);
+    }
+    50% {
+      transform: scaleY(1);
+    }
+  }
+
+  .animate-waveform {
+    animation: waveform 0.5s ease-in-out infinite;
+  }
 }
