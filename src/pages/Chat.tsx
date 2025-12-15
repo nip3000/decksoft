@@ -98,6 +98,7 @@ const Chat = () => {
   
   const [pendingResponses, setPendingResponses] = useState(0);
   const isTyping = pendingResponses > 0;
+  const [isUploadingAudio, setIsUploadingAudio] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -137,6 +138,7 @@ const Chat = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    setIsUploadingAudio(true);
 
     // Mark message as read after a brief delay
     setTimeout(() => {
@@ -171,6 +173,8 @@ const Chat = () => {
         body: formData,
       });
 
+      setIsUploadingAudio(false);
+
       if (!response.ok) {
         const status = response.status;
         if (status >= 500) {
@@ -193,6 +197,7 @@ const Chat = () => {
       setTimeout(() => inputRef.current?.focus(), 100);
     } catch (error) {
       console.error("Audio message error:", error);
+      setIsUploadingAudio(false);
       // Silently handle errors for parallel messages - don't show in chat
       setTimeout(() => inputRef.current?.focus(), 100);
     } finally {
@@ -645,6 +650,18 @@ const Chat = () => {
 
       {/* Input Area */}
       <div className="border-t border-border p-4 shrink-0 bg-card">
+        {/* Upload progress indicator */}
+        {isUploadingAudio && (
+          <div className="max-w-3xl mx-auto mb-3">
+            <div className="flex items-center gap-3 px-4 py-2 bg-primary/10 rounded-md border border-primary/30">
+              <Loader2 className="w-4 h-4 animate-spin text-primary" />
+              <span className="text-sm font-medium text-primary">Enviando áudio...</span>
+              <div className="flex-1 h-1.5 bg-primary/20 rounded-full overflow-hidden">
+                <div className="h-full bg-primary rounded-full animate-pulse w-full" style={{ animation: 'pulse 1s ease-in-out infinite, slide 2s ease-in-out infinite' }}></div>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="max-w-3xl mx-auto flex gap-2">
           {audioRecorder.state === "recording" ? (
             <div className="flex-1 flex items-center justify-between gap-3 px-4 py-2 bg-destructive/10 rounded-md border border-destructive/30">
@@ -668,7 +685,7 @@ const Chat = () => {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Digite sua mensagem..."
-              disabled={audioRecorder.state === "processing"}
+              disabled={audioRecorder.state === "processing" || isUploadingAudio}
               className="flex-1"
             />
           )}
@@ -676,7 +693,7 @@ const Chat = () => {
             variant={audioRecorder.state === "recording" ? "destructive" : "outline"}
             size="icon"
             onClick={handleMicClick}
-            disabled={audioRecorder.state === "processing"}
+            disabled={audioRecorder.state === "processing" || isUploadingAudio}
             className={audioRecorder.state === "recording" ? "animate-pulse" : ""}
           >
             {audioRecorder.state === "processing" ? (
@@ -689,7 +706,7 @@ const Chat = () => {
           </Button>
           <Button 
             onClick={audioRecorder.state === "recording" ? handleSendAudio : sendMessage} 
-            disabled={audioRecorder.state === "idle" && !input.trim()}
+            disabled={(audioRecorder.state === "idle" && !input.trim()) || isUploadingAudio}
           >
             <Send className="w-4 h-4" />
           </Button>
