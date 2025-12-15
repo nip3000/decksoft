@@ -30,6 +30,53 @@ const greetingMessages = [
   "Como posso ajudá-lo(a) hoje?"
 ];
 
+// Robust fetch with timeout and retry
+const fetchWithRetry = async (
+  url: string, 
+  options: RequestInit, 
+  retries = 2, 
+  timeout = 30000
+): Promise<Response> => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+  
+  const fetchOptions: RequestInit = {
+    ...options,
+    signal: controller.signal,
+  };
+  
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch(url, fetchOptions);
+      clearTimeout(timeoutId);
+      return response;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      
+      if (attempt === retries) {
+        throw error;
+      }
+      
+      // Wait before retry (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+    }
+  }
+  
+  throw new Error("Max retries reached");
+};
+
+const getErrorMessage = (error: unknown): string => {
+  if (error instanceof Error) {
+    if (error.name === 'AbortError') {
+      return "A conexão demorou muito. Por favor, tente novamente.";
+    }
+    if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
+      return "Sem conexão com a internet. Verifique sua conexão e tente novamente.";
+    }
+  }
+  return "Desculpe, ocorreu um erro. Tente novamente em alguns instantes.";
+};
+
 // Validation helpers
 const isValidEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -111,8 +158,8 @@ const Chat = () => {
     setIsSubmittingLead(true);
     
     try {
-      // Send lead info to webhook
-      await fetch(WEBHOOK_URL, {
+      // Send lead info to webhook with retry
+      await fetchWithRetry(WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -120,9 +167,10 @@ const Chat = () => {
           lead: leadInfo,
           timestamp: new Date().toISOString()
         }),
-      });
+      }, 2, 15000);
     } catch (error) {
       console.error("Error sending lead info:", error);
+      // Continue to chat even if lead registration fails - we don't want to block the user
     }
     
     setIsSubmittingLead(false);
@@ -214,7 +262,7 @@ const Chat = () => {
         };
         setMessages(prev => [...prev, assistantMessage]);
       } else {
-        const response = await fetch(WEBHOOK_URL, {
+        const response = await fetchWithRetry(WEBHOOK_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ 
@@ -223,9 +271,18 @@ const Chat = () => {
             history: messages,
             lead: leadInfo
           }),
-        });
+        }, 2, 30000);
 
-        if (!response.ok) throw new Error("Erro na comunicação");
+        if (!response.ok) {
+          const status = response.status;
+          if (status >= 500) {
+            throw new Error("Servidor temporariamente indisponível");
+          } else if (status === 429) {
+            throw new Error("Muitas requisições. Aguarde um momento.");
+          } else {
+            throw new Error("Erro na comunicação");
+          }
+        }
 
         const data = await response.json();
         const assistantMessage: Message = {
@@ -241,7 +298,7 @@ const Chat = () => {
       const errorMessage: Message = {
         id: crypto.randomUUID(),
         role: "assistant",
-        content: "Desculpe, ocorreu um erro. Tente novamente mais tarde.",
+        content: getErrorMessage(error),
         timestamp: getBrasiliaTimestamp(),
       };
       setMessages(prev => [...prev, errorMessage]);
