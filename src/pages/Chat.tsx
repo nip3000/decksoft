@@ -141,17 +141,27 @@ const Chat = () => {
     setPendingResponses(prev => prev + 1);
 
     try {
+      // Converter Base64 para Blob binário
+      const byteCharacters = atob(audioBase64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const audioBlob = new Blob([byteArray], { type: "audio/webm" });
+
+      // Criar FormData com arquivo binário
+      const formData = new FormData();
+      formData.append("audio", audioBlob, "audio.webm");
+      formData.append("messageType", "audio");
+      formData.append("format", "webm");
+      formData.append("timestamp", userMessage.timestamp);
+      formData.append("history", JSON.stringify(messages));
+      formData.append("lead", JSON.stringify(leadInfo));
+
       const response = await fetchWithoutTimeout(WEBHOOK_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          messageType: "audio",
-          audio: audioBase64,
-          format: "webm",
-          timestamp: userMessage.timestamp,
-          history: messages,
-          lead: leadInfo
-        }),
+        body: formData,
       });
 
       if (!response.ok) {
