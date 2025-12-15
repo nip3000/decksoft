@@ -149,6 +149,7 @@ const Chat = () => {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [showEndChatDialog, setShowEndChatDialog] = useState(false);
   const [rating, setRating] = useState(0);
+  const [ratingComment, setRatingComment] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const hasInitialized = useRef(false);
@@ -829,8 +830,15 @@ const Chat = () => {
               </button>
             ))}
           </div>
+          <Textarea
+            value={ratingComment}
+            onChange={(e) => setRatingComment(e.target.value)}
+            placeholder="Deixe um comentário (opcional)"
+            className="resize-none"
+            rows={3}
+          />
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setRating(0)}>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel onClick={() => { setRating(0); setRatingComment(""); }}>Cancelar</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => navigate("/")}
               disabled={rating === 0}
