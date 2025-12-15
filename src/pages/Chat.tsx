@@ -460,7 +460,7 @@ const Chat = () => {
               <div
                 key={message.id}
                 className={cn(
-                  "flex items-start gap-2",
+                  "flex items-start gap-2 animate-fade-in",
                   message.role === "user" ? "justify-end" : "justify-start"
                 )}
               >
