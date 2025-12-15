@@ -96,7 +96,8 @@ const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   
-  const [isTyping, setIsTyping] = useState(false);
+  const [pendingResponses, setPendingResponses] = useState(0);
+  const isTyping = pendingResponses > 0;
   const [showScrollTop, setShowScrollTop] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -137,7 +138,7 @@ const Chat = () => {
       ));
     }, 800);
 
-    setIsTyping(true);
+    setPendingResponses(prev => prev + 1);
 
     try {
       const response = await fetchWithoutTimeout(WEBHOOK_URL, {
@@ -178,7 +179,7 @@ const Chat = () => {
       // Silently handle errors for parallel messages - don't show in chat
       setTimeout(() => inputRef.current?.focus(), 100);
     } finally {
-      setIsTyping(false);
+      setPendingResponses(prev => Math.max(0, prev - 1));
     }
   };
 
@@ -285,7 +286,7 @@ const Chat = () => {
       ));
     }, 800);
 
-    setIsTyping(true);
+    setPendingResponses(prev => prev + 1);
 
     try {
       if (!WEBHOOK_URL) {
@@ -336,7 +337,7 @@ const Chat = () => {
       // Silently handle errors for parallel messages - don't show in chat
       setTimeout(() => inputRef.current?.focus(), 100);
     } finally {
-      setIsTyping(false);
+      setPendingResponses(prev => Math.max(0, prev - 1));
     }
   };
 
