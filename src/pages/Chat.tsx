@@ -97,7 +97,8 @@ const Chat = () => {
   const [input, setInput] = useState("");
   
   const [pendingResponses, setPendingResponses] = useState(0);
-  const isTyping = pendingResponses > 0;
+  const [showTypingIndicator, setShowTypingIndicator] = useState(false);
+  const isTyping = pendingResponses > 0 && showTypingIndicator;
   const [isUploadingAudio, setIsUploadingAudio] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -140,11 +141,13 @@ const Chat = () => {
     setMessages(prev => [...prev, userMessage]);
     setIsUploadingAudio(true);
 
-    // Mark message as read after a brief delay
+    // Mark message as read after a brief delay, then show typing indicator after 2s
     setTimeout(() => {
       setMessages(prev => prev.map(msg => 
         msg.id === userMessage.id ? { ...msg, status: "read" } : msg
       ));
+      // Show typing indicator 2 seconds after message is read
+      setTimeout(() => setShowTypingIndicator(true), 2000);
     }, 800);
 
     setPendingResponses(prev => prev + 1);
@@ -201,6 +204,7 @@ const Chat = () => {
       // Silently handle errors for parallel messages - don't show in chat
       setTimeout(() => inputRef.current?.focus(), 100);
     } finally {
+      setShowTypingIndicator(false);
       setPendingResponses(prev => Math.max(0, prev - 1));
     }
   };
@@ -301,11 +305,13 @@ const Chat = () => {
     setMessages(prev => [...prev, userMessage]);
     setInput("");
 
-    // Mark message as read after a brief delay (simulating server acknowledgment)
+    // Mark message as read after a brief delay, then show typing indicator after 2s
     setTimeout(() => {
       setMessages(prev => prev.map(msg => 
         msg.id === userMessage.id ? { ...msg, status: "read" } : msg
       ));
+      // Show typing indicator 2 seconds after message is read
+      setTimeout(() => setShowTypingIndicator(true), 2000);
     }, 800);
 
     setPendingResponses(prev => prev + 1);
@@ -360,6 +366,7 @@ const Chat = () => {
       // Silently handle errors for parallel messages - don't show in chat
       setTimeout(() => inputRef.current?.focus(), 100);
     } finally {
+      setShowTypingIndicator(false);
       setPendingResponses(prev => Math.max(0, prev - 1));
     }
   };
