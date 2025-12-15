@@ -163,6 +163,7 @@ const Index = () => {
                 size="lg" 
                 variant="outline" 
                 onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
               >
                 Inicie o teste hoje
               </Button>
