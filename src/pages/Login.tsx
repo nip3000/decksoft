@@ -170,6 +170,7 @@ const Login = () => {
               <div className="text-right">
                 <button 
                   type="button"
+                  onClick={() => navigate("/recuperar-senha")}
                   className="text-sm text-primary hover:underline"
                 >
                   Esqueceu a senha?
