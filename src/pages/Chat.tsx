@@ -622,7 +622,12 @@ const Chat = () => {
             ))}
 
             {isTyping && (
-              <div className="flex justify-start animate-fade-in">
+              <div 
+                className="flex justify-start opacity-0 translate-y-3"
+                style={{
+                  animation: 'typingIndicatorIn 0.5s ease-out 0.1s forwards'
+                }}
+              >
                 <img 
                   src={chatAvatar} 
                   alt="Ana" 
