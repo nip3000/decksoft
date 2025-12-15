@@ -471,7 +471,10 @@ const Chat = () => {
                     className="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-0.5" 
                   />
                 )}
-                <div className="flex flex-col items-end">
+                <div className={cn(
+                  "flex flex-col",
+                  message.role === "user" ? "items-end" : "items-start"
+                )}>
                   <div
                     className={cn(
                       "max-w-[80%] rounded-2xl px-4 py-3",
